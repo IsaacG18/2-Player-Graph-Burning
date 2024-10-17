@@ -71,10 +71,9 @@ def minimax_alpha_beta(node, depth, alpha, beta, maximizing_player):
                 break 
         return min_eval, [node.choice] + min_choice
 
-def generate_tree(adj_mat, depth):
-    ver_colours =  np.zeros(adj_mat.shape[0])
+def generate_tree(adj_mat, depth, ver_colours, red):
     root_node = Node([],0, ver_colours)
-    update_tree(adj_mat, ver_colours, root_node, depth)
+    update_tree(adj_mat, ver_colours, root_node, depth, red)
     return root_node
 
 def get_value(ver_colours):
@@ -82,36 +81,35 @@ def get_value(ver_colours):
     
 
 
-def update_tree(adj_mat, ver_colours, parent, depth):
+def update_tree(adj_mat, ver_colours, parent, depth, red):
     if depth <= 0:
         return
-    max_value = float("-inf")
-    for i in np.where(ver_colours == 0)[0]:
-        red_current = np.copy(ver_colours)
-        red_current[i] += ngs.RED_NUMBER
-        current_red_node = Node(i, red_current)
-        parent.children.append(current_red_node)
+    if red:
+        max_value = float("-inf")
+        for i in np.where(ver_colours == 0)[0]:
+            red_current = np.copy(ver_colours)
+            red_current[i] += ngs.RED_NUMBER
+            current_red_node = Node(i, red_current)
+            parent.children.append(current_red_node)
+            update_tree(adj_mat, red_current, current_red_node, depth-1, False)
+            if current_red_node.children == []:
+                current_red_node.value = get_value(red_current)
+            parent.value = max(max_value, current_red_node.value)
+            max_value = max(max_value, current_red_node.value)
+    else:
         min_value = float('inf')
-        for j in np.where(red_current == 0)[0]:
-            blue_current = np.copy(red_current)
+        for j in np.where(ver_colours == 0)[0]:
+            blue_current = np.copy(ver_colours)
             blue_current[j] += ngs.BLUE_NUMBER
             ngs.burn_graph(adj_mat, blue_current)
             current_blue_node = Node(j, blue_current)
-            parent.children[-1].children.append(current_blue_node)
-            update_tree(adj_mat, blue_current, current_blue_node, depth-1)
+            parent.children.append(current_blue_node)
+            update_tree(adj_mat, blue_current, current_blue_node, depth-1, True)
             if current_blue_node.children == []:
                 current_blue_node.value = get_value(blue_current)
+            parent.value = min(min_value, current_blue_node.value)
             min_value = min(min_value, current_blue_node.value)
-        if current_red_node.children == []:
-            current_red_node.value = get_value(red_current)
-            parent.value = max(max_value, current_red_node.value)
-            max_value = max(max_value, current_red_node.value)
-        else:
-            current_red_node.value = min_value
-            parent.value = max(max_value, current_red_node.value)
-            max_value = max(max_value, current_red_node.value)
-
-
+        
 
 
 
@@ -136,13 +134,13 @@ def create_path_graph_adj_matrix(n):
         adj_matrix[i + 1, i] = 1
     return adj_matrix
 
-matrix = create_path_graph_adj_matrix(6)
-matrix[1,0], matrix[0,1] = 0, 0
-matrix[0,2], matrix[2,0] = 1, 1
+matrix = create_path_graph_adj_matrix(5)
+# matrix[1,0], matrix[0,1] = 0, 0
+# matrix[0,2], matrix[2,0] = 1, 1
 ver_colours = np.zeros(matrix.shape[0])
 names = np.arange(ver_colours.shape[0])
-# ngs.create_graph(matrix, ver_colours, names)
-root = generate_tree(matrix, 100)
+# ngs.create_graph(matrix, ver_colours, names)s
+root = generate_tree(matrix, 100, np.zeros(matrix.shape[0]), True)
 # print_tree(root)
 
-print(minimax_alpha_beta_return_all_best(root, 10, -100, 100, True))
+print(minimax_alpha_beta(root, 10, -100, 100, True))
