@@ -1,5 +1,6 @@
 import normal_graph_sim as ngs
 import numpy as np
+import copy
 class Node:
     def __init__(self, choice=None, ver_colour=None, value=None, children=None):
         self.value = value
@@ -87,28 +88,72 @@ def update_tree(adj_mat, ver_colours, parent, depth, red):
     if red:
         max_value = float("-inf")
         for i in np.where(ver_colours == 0)[0]:
-            red_current = np.copy(ver_colours)
-            red_current[i] += ngs.RED_NUMBER
-            current_red_node = Node(i, red_current)
-            parent.children.append(current_red_node)
-            update_tree(adj_mat, red_current, current_red_node, depth-1, False)
-            if current_red_node.children == []:
-                current_red_node.value = get_value(red_current)
-            parent.value = max(max_value, current_red_node.value)
-            max_value = max(max_value, current_red_node.value)
+            red_cur = np.copy(ver_colours)
+            red_cur[i] += ngs.RED_NUMBER
+            cur_red_node = Node(i, red_cur)
+            parent.children.append(cur_red_node)
+            update_tree(adj_mat, red_cur, cur_red_node, depth-1, False)
+            if cur_red_node.children == []:
+                cur_red_node.value = get_value(red_cur)
+            parent.value = max(max_value, cur_red_node.value)
+            max_value = max(max_value, cur_red_node.value)
     else:
         min_value = float('inf')
         for j in np.where(ver_colours == 0)[0]:
-            blue_current = np.copy(ver_colours)
-            blue_current[j] += ngs.BLUE_NUMBER
-            ngs.burn_graph(adj_mat, blue_current)
-            current_blue_node = Node(j, blue_current)
-            parent.children.append(current_blue_node)
-            update_tree(adj_mat, blue_current, current_blue_node, depth-1, True)
-            if current_blue_node.children == []:
-                current_blue_node.value = get_value(blue_current)
-            parent.value = min(min_value, current_blue_node.value)
-            min_value = min(min_value, current_blue_node.value)
+            blue_cur = np.copy(ver_colours)
+            blue_cur[j] += ngs.BLUE_NUMBER
+            ngs.burn_graph(adj_mat, blue_cur)
+            cur_blue_node = Node(j, blue_cur)
+            parent.children.append(cur_blue_node)
+            update_tree(adj_mat, blue_cur, cur_blue_node, depth-1, True)
+            if cur_blue_node.children == []:
+                cur_blue_node.value = get_value(blue_cur)
+            parent.value = min(min_value, cur_blue_node.value)
+            min_value = min(min_value, cur_blue_node.value)
+
+
+def generate_tree_mini_max(adj_mat, depth, ver_colours, red):
+    root_node = Node([],0, ver_colours)
+    update_tree(adj_mat, ver_colours, root_node, depth, red)
+    return root_node
+
+def get_value_mini_max(ver_colours):
+    return np.count_nonzero(ver_colours == ngs.RED_NUMBER) - np.count_nonzero(ver_colours == ngs.BLUE_NUMBER)
+    
+
+
+def update_tree_mini_max(adj_mat, ver_colours, parent, depth, red):
+    if depth <= 0:
+        return
+    if red:
+        max_value = float("-inf")
+        for i in np.where(ver_colours == 0)[0]:
+            red_cur = np.copy(ver_colours)
+            red_cur[i] += ngs.RED_NUMBER
+            cur_red_node = Node(i, red_cur)
+            parent.children.append(cur_red_node)
+            update_tree_mini_max(adj_mat, red_cur, cur_red_node, depth-1, False)
+            if cur_red_node.children == []:
+                cur_red_node.value = get_value(red_cur)
+            parent.value = max(max_value, cur_red_node.value)
+            max_value = max(max_value, cur_red_node.value)
+            if max_value > 0:
+                return
+    else:
+        min_value = float('inf')
+        for j in np.where(ver_colours == 0)[0]:
+            blue_cur = np.copy(ver_colours)
+            blue_cur[j] += ngs.BLUE_NUMBER
+            ngs.burn_graph(adj_mat, blue_cur)
+            cur_blue_node = Node(j, blue_cur)
+            parent.children.append(cur_blue_node)
+            update_tree_mini_max(adj_mat, blue_cur, cur_blue_node, depth-1, True)
+            if cur_blue_node.children == []:
+                cur_blue_node.value = get_value(blue_cur)
+            parent.value = min(min_value, cur_blue_node.value)
+            min_value = min(min_value, cur_blue_node.value)
+            if min_value < 0:
+                return
         
 
 
@@ -134,13 +179,57 @@ def create_path_graph_adj_matrix(n):
         adj_matrix[i + 1, i] = 1
     return adj_matrix
 
-matrix = create_path_graph_adj_matrix(5)
-# matrix[1,0], matrix[0,1] = 0, 0
-# matrix[0,2], matrix[2,0] = 1, 1
+matrix = create_path_graph_adj_matrix(7)
+matrix[1,0], matrix[0,1] = 0, 0
+matrix[0,2], matrix[2,0] = 1, 1
 ver_colours = np.zeros(matrix.shape[0])
-names = np.arange(ver_colours.shape[0])
-# ngs.create_graph(matrix, ver_colours, names)s
-root = generate_tree(matrix, 100, np.zeros(matrix.shape[0]), True)
+# names = np.arange(ver_colours.shape[0])
+# ngs.create_graph(matrix, ver_colours, names)
+# root = generate_tree(matrix, 1000, np.zeros(matrix.shape[0]), True)
 # print_tree(root)
 
-print(minimax_alpha_beta(root, 10, -100, 100, True))
+def get_child(root, choice):
+    for child in root.children:
+        if child.choice == choice:
+            return child
+    return None
+
+def play_game(matrix, ver_colours):
+    names = np.arange(ver_colours.shape[0])
+    root = generate_tree(matrix, 100, np.zeros(matrix.shape[0]), True)
+    cur_node = copy.deepcopy(root)
+    cur_ver_colours = np.copy(ver_colours)
+    input_value = -2
+    while input_value != -1:
+        if np.all(cur_ver_colours != 0):
+            print("Game Over, final score is: ", get_value(cur_ver_colours))
+            ngs.create_graph(matrix, cur_ver_colours, names)
+            cur_ver_colours = np.copy(ver_colours)
+            cur_node = copy.deepcopy(root)
+        ngs.create_graph(matrix, cur_ver_colours, names)
+        try:
+            input_value = int(input("Enter choice or quit by entering -1: "))
+            if input_value < 0  or input_value >= cur_ver_colours.shape[0] or cur_ver_colours[input_value] != 0:
+                if input_value == -1:
+                    print("Quitting...")
+                else:
+                    print("Not a value input")
+                continue
+            cur_node = get_child(cur_node, input_value)
+            cur_ver_colours[input_value] += ngs.RED_NUMBER
+            if np.any(cur_ver_colours == 0):
+                minimax_value = minimax_alpha_beta(cur_node, 1, -10000, 10000, False)
+                print("Current player 2 Score: ",  minimax_value[0])
+                cur_node = get_child(cur_node, minimax_value[1][1])
+                cur_ver_colours[minimax_value[1][1]] += ngs.BLUE_NUMBER
+                ngs.burn_graph(matrix, cur_ver_colours)
+            
+
+            
+        except ValueError:
+            print("Not a value input")
+        
+
+    
+play_game(matrix, ver_colours)
+# print(minimax_alpha_beta(root, 10, -100, 100, True))
