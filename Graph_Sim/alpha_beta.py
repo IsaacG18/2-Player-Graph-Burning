@@ -229,7 +229,13 @@ def create_path_graph_adj_matrix(n):
 matrix = create_path_graph_adj_matrix(7)
 matrix[1,0], matrix[0,1] = 0, 0
 matrix[0,2], matrix[2,0] = 1, 1
+matrix = create_path_graph_adj_matrix(7)
+matrix[1,0], matrix[0,1] = 0, 0
+matrix[0,2], matrix[2,0] = 1, 1
 ver_colours = np.zeros(matrix.shape[0])
+# names = np.arange(ver_colours.shape[0])
+# ngs.create_graph(matrix, ver_colours, names)
+# root = generate_tree(matrix, 1000, np.zeros(matrix.shape[0]), True)
 # names = np.arange(ver_colours.shape[0])
 # ngs.create_graph(matrix, ver_colours, names)
 # root = generate_tree(matrix, 1000, np.zeros(matrix.shape[0]), True)
