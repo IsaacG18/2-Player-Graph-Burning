@@ -110,8 +110,99 @@ def update_tree(adj_mat, ver_colours, parent, depth, red):
                 cur_blue_node.value = get_value(blue_cur)
             parent.value = min(min_value, cur_blue_node.value)
             min_value = min(min_value, cur_blue_node.value)
+
+
+def generate_tree_mini_max(adj_mat, depth, ver_colours, red):
+    root_node = Node([],0, ver_colours)
+    update_tree_mini_max(adj_mat, ver_colours, root_node, depth, red)
+    return root_node
+    
+
+
+def update_tree_mini_max(adj_mat, ver_colours, parent, depth, red):
+    if depth <= 0:
+        return
+    if red:
+        max_value = float("-inf")
+        for i in np.where(ver_colours == 0)[0]:
+            red_cur = np.copy(ver_colours)
+            red_cur[i] += ngs.RED_NUMBER
+            cur_red_node = Node(i, red_cur)
+            parent.children.append(cur_red_node)
+            update_tree_mini_max(adj_mat, red_cur, cur_red_node, depth-1, False)
+            if cur_red_node.children == []:
+                cur_red_node.value = get_value(red_cur)
+            parent.value = max(max_value, cur_red_node.value)
+            max_value = max(max_value, cur_red_node.value)
+            if max_value > 0:
+                return
+    else:
+        min_value = float('inf')
+        for j in np.where(ver_colours == 0)[0]:
+            blue_cur = np.copy(ver_colours)
+            blue_cur[j] += ngs.BLUE_NUMBER
+            ngs.burn_graph(adj_mat, blue_cur)
+            cur_blue_node = Node(j, blue_cur)
+            parent.children.append(cur_blue_node)
+            update_tree_mini_max(adj_mat, blue_cur, cur_blue_node, depth-1, True)
+            if cur_blue_node.children == []:
+                cur_blue_node.value = get_value(blue_cur)
+            parent.value = min(min_value, cur_blue_node.value)
+            min_value = min(min_value, cur_blue_node.value)
+            if min_value < 0:
+                return
         
 
+
+def generate_tree_hashmap(adj_mat, depth, ver_colours, red, map = {}):
+    root_node = Node([],0, ver_colours)
+    generate_tree_hashmap(adj_mat, ver_colours, root_node, depth, red, map)
+    return root_node
+    
+    
+
+
+def update_tree_hashmap(adj_mat, ver_colours, parent, depth, red, map):
+    if depth <= 0:
+        return
+    if red:
+        max_value = float("-inf")
+        for i in np.where(ver_colours == 0)[0]:
+            red_cur = np.copy(ver_colours)
+            red_cur[i] += ngs.RED_NUMBER
+            if tuple(red_cur) in map:
+                cur_red_node = map[tuple(red_cur)]
+                parent.value = max(max_value, cur_red_node.value)
+                max_value = max(max_value, cur_red_node.value)
+            else:
+                cur_red_node = Node(i, red_cur)
+                parent.children.append(cur_red_node)
+                update_tree_hashmap(adj_mat, red_cur, cur_red_node, depth-1, False, map)
+                if cur_red_node.children == []:
+                    cur_red_node.value = get_value(red_cur)
+                map[tuple(red_cur)] = cur_red_node
+                parent.value = max(max_value, cur_red_node.value)
+                max_value = max(max_value, cur_red_node.value)
+                
+    else:
+        min_value = float('inf')
+        for j in np.where(ver_colours == 0)[0]:
+            blue_cur = np.copy(ver_colours)
+            blue_cur[j] += ngs.BLUE_NUMBER
+            ngs.burn_graph(adj_mat, blue_cur)
+            if tuple(blue_cur) in map:
+                cur_blue_node = map[tuple(blue_cur)]
+                parent.value = min(min_value, cur_blue_node.value)
+                min_value = min(min_value, cur_blue_node.value)
+            else:
+                cur_blue_node = Node(j, blue_cur)
+                parent.children.append(cur_blue_node)
+                update_tree_mini_max(adj_mat, blue_cur, cur_blue_node, depth-1, True, map)
+                if cur_blue_node.children == []:
+                    cur_blue_node.value = get_value(blue_cur)
+                map[tuple(blue_cur)] = cur_blue_node
+                parent.value = min(min_value, cur_blue_node.value)
+                min_value = min(min_value, cur_blue_node.value)
 
 
 def print_tree(node, level=0):
