@@ -9,7 +9,7 @@ class Node:
         self.ver_colour = ver_colour
 
 
-def minimax_alpha_beta_return_all_best(node, depth, alpha, beta, maximizing_player):
+def minimax_alpha_beta_return_all_best(node, depth, maximizing_player, alpha=float('-inf'), beta= float('inf')):
     if not node.children or depth == 0:
         return node.value, node.choice
 
@@ -17,7 +17,7 @@ def minimax_alpha_beta_return_all_best(node, depth, alpha, beta, maximizing_play
         max_eval = float('-inf')
         max_choice = list()
         for child in node.children:
-            eval, choice = minimax_alpha_beta_return_all_best(child, depth - 1, alpha, beta, False)
+            eval, choice = minimax_alpha_beta_return_all_best(child, depth - 1, False, alpha, beta)
             if (max_eval < eval):
                 max_choice = [choice]
                 max_eval =  eval
@@ -31,7 +31,7 @@ def minimax_alpha_beta_return_all_best(node, depth, alpha, beta, maximizing_play
         min_eval = float('inf')
         min_choice = list()
         for child in node.children:
-            eval, choice = minimax_alpha_beta_return_all_best(child, depth - 1, alpha, beta, True)
+            eval, choice = minimax_alpha_beta_return_all_best(child, depth - 1, True, alpha, beta)
             if (min_eval > eval):
                 min_choice = [choice]
                 min_eval =  eval
@@ -43,7 +43,7 @@ def minimax_alpha_beta_return_all_best(node, depth, alpha, beta, maximizing_play
         return min_eval, (node.choice, min_choice)
 
 
-def minimax_alpha_beta(node, depth, alpha, beta, maximizing_player):
+def minimax_alpha_beta(node, depth, maximizing_player, alpha=float('-inf'), beta= float('inf')):
     if not node.children or depth == 0:
         return node.value, [node.choice]
 
@@ -51,7 +51,7 @@ def minimax_alpha_beta(node, depth, alpha, beta, maximizing_player):
         max_eval = float('-inf')
         max_choice = []
         for child in node.children:
-            eval, choice = minimax_alpha_beta(child, depth - 1, alpha, beta, False)
+            eval, choice = minimax_alpha_beta(child, depth - 1, False, alpha, beta)
             if (max_eval < eval):
                 max_choice = choice
                 max_eval =  eval
@@ -63,7 +63,7 @@ def minimax_alpha_beta(node, depth, alpha, beta, maximizing_player):
         min_eval = float('inf')
         min_choice = []
         for child in node.children:
-            eval, choice = minimax_alpha_beta(child, depth - 1, alpha, beta, True)
+            eval, choice = minimax_alpha_beta(child, depth - 1, True, alpha, beta)
             if (min_eval > eval):
                 min_choice = choice
                 min_eval =  eval
@@ -76,9 +76,6 @@ def generate_tree(adj_mat, depth, ver_colours, red):
     root_node = Node([],0, ver_colours)
     update_tree(adj_mat, ver_colours, root_node, depth, red)
     return root_node
-
-def get_value(ver_colours):
-    return np.count_nonzero(ver_colours == ngs.RED_NUMBER) - np.count_nonzero(ver_colours == ngs.BLUE_NUMBER)
     
 
 
@@ -94,7 +91,7 @@ def update_tree(adj_mat, ver_colours, parent, depth, red):
             parent.children.append(cur_red_node)
             update_tree(adj_mat, red_cur, cur_red_node, depth-1, False)
             if cur_red_node.children == []:
-                cur_red_node.value = get_value(red_cur)
+                cur_red_node.value = ngs.get_value(red_cur)
             parent.value = max(max_value, cur_red_node.value)
             max_value = max(max_value, cur_red_node.value)
     else:
@@ -107,7 +104,7 @@ def update_tree(adj_mat, ver_colours, parent, depth, red):
             parent.children.append(cur_blue_node)
             update_tree(adj_mat, blue_cur, cur_blue_node, depth-1, True)
             if cur_blue_node.children == []:
-                cur_blue_node.value = get_value(blue_cur)
+                cur_blue_node.value = ngs.get_value(blue_cur)
             parent.value = min(min_value, cur_blue_node.value)
             min_value = min(min_value, cur_blue_node.value)
 
@@ -131,7 +128,7 @@ def update_tree_mini_max(adj_mat, ver_colours, parent, depth, red):
             parent.children.append(cur_red_node)
             update_tree_mini_max(adj_mat, red_cur, cur_red_node, depth-1, False)
             if cur_red_node.children == []:
-                cur_red_node.value = get_value(red_cur)
+                cur_red_node.value = ngs.get_value(red_cur)
             parent.value = max(max_value, cur_red_node.value)
             max_value = max(max_value, cur_red_node.value)
             if max_value > 0:
@@ -146,7 +143,7 @@ def update_tree_mini_max(adj_mat, ver_colours, parent, depth, red):
             parent.children.append(cur_blue_node)
             update_tree_mini_max(adj_mat, blue_cur, cur_blue_node, depth-1, True)
             if cur_blue_node.children == []:
-                cur_blue_node.value = get_value(blue_cur)
+                cur_blue_node.value = ngs.get_value(blue_cur)
             parent.value = min(min_value, cur_blue_node.value)
             min_value = min(min_value, cur_blue_node.value)
             if min_value < 0:
@@ -179,7 +176,7 @@ def update_tree_hashmap(adj_mat, ver_colours, parent, depth, red, map):
                 parent.children.append(cur_red_node)
                 update_tree_hashmap(adj_mat, red_cur, cur_red_node, depth-1, False, map)
                 if cur_red_node.children == []:
-                    cur_red_node.value = get_value(red_cur)
+                    cur_red_node.value = ngs.get_value(red_cur)
                 map[tuple(red_cur)] = cur_red_node
                 parent.value = max(max_value, cur_red_node.value)
                 max_value = max(max_value, cur_red_node.value)
@@ -199,7 +196,7 @@ def update_tree_hashmap(adj_mat, ver_colours, parent, depth, red, map):
                 parent.children.append(cur_blue_node)
                 update_tree_mini_max(adj_mat, blue_cur, cur_blue_node, depth-1, True, map)
                 if cur_blue_node.children == []:
-                    cur_blue_node.value = get_value(blue_cur)
+                    cur_blue_node.value = ngs.get_value(blue_cur)
                 map[tuple(blue_cur)] = cur_blue_node
                 parent.value = min(min_value, cur_blue_node.value)
                 min_value = min(min_value, cur_blue_node.value)
@@ -226,14 +223,14 @@ def create_path_graph_adj_matrix(n):
         adj_matrix[i + 1, i] = 1
     return adj_matrix
 
-matrix = create_path_graph_adj_matrix(7)
-matrix[1,0], matrix[0,1] = 0, 0
-matrix[0,2], matrix[2,0] = 1, 1
-matrix = create_path_graph_adj_matrix(7)
-matrix[1,0], matrix[0,1] = 0, 0
-matrix[0,2], matrix[2,0] = 1, 1
-ver_colours = np.zeros(matrix.shape[0])
-# names = np.arange(ver_colours.shape[0])
+# matrix = create_path_graph_adj_matrix(7)
+# matrix[1,0], matrix[0,1] = 0, 0
+# matrix[0,2], matrix[2,0] = 1, 1
+# matrix = create_path_graph_adj_matrix(7)
+# matrix[1,0], matrix[0,1] = 0, 0
+# matrix[0,2], matrix[2,0] = 1, 1
+# ver_colours = np.zeros(matrix.shape[0])
+# # names = np.arange(ver_colours.shape[0])
 # ngs.create_graph(matrix, ver_colours, names)
 # root = generate_tree(matrix, 1000, np.zeros(matrix.shape[0]), True)
 # names = np.arange(ver_colours.shape[0])
@@ -241,48 +238,4 @@ ver_colours = np.zeros(matrix.shape[0])
 # root = generate_tree(matrix, 1000, np.zeros(matrix.shape[0]), True)
 # print_tree(root)
 
-def get_child(root, choice):
-    for child in root.children:
-        if child.choice == choice:
-            return child
-    return None
-
-def play_game(matrix, ver_colours):
-    names = np.arange(ver_colours.shape[0])
-    root = generate_tree(matrix, 100, np.zeros(matrix.shape[0]), True)
-    cur_node = copy.deepcopy(root)
-    cur_ver_colours = np.copy(ver_colours)
-    input_value = -2
-    while input_value != -1:
-        if np.all(cur_ver_colours != 0):
-            print("Game Over, final score is: ", get_value(cur_ver_colours))
-            ngs.create_graph(matrix, cur_ver_colours, names)
-            cur_ver_colours = np.copy(ver_colours)
-            cur_node = copy.deepcopy(root)
-        ngs.create_graph(matrix, cur_ver_colours, names)
-        try:
-            input_value = int(input("Enter choice or quit by entering -1: "))
-            if input_value < 0  or input_value >= cur_ver_colours.shape[0] or cur_ver_colours[input_value] != 0:
-                if input_value == -1:
-                    print("Quitting...")
-                else:
-                    print("Not a value input")
-                continue
-            cur_node = get_child(cur_node, input_value)
-            cur_ver_colours[input_value] += ngs.RED_NUMBER
-            if np.any(cur_ver_colours == 0):
-                minimax_value = minimax_alpha_beta(cur_node, 1, -10000, 10000, False)
-                print("Current player 2 Score: ",  minimax_value[0])
-                cur_node = get_child(cur_node, minimax_value[1][1])
-                cur_ver_colours[minimax_value[1][1]] += ngs.BLUE_NUMBER
-                ngs.burn_graph(matrix, cur_ver_colours)
-            
-
-            
-        except ValueError:
-            print("Not a value input")
-        
-
-    
-play_game(matrix, ver_colours)
 # print(minimax_alpha_beta(root, 10, -100, 100, True))
