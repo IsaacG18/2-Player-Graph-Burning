@@ -30,7 +30,8 @@ def burn_graph(adj_mat, ver_colours):
     ver_colours += red+blue*BLUE_NUMBER
     return last_ver
     
-    
+def get_value(ver_colours):
+    return np.count_nonzero(ver_colours == RED_NUMBER) - np.count_nonzero(ver_colours == BLUE_NUMBER)
 
 def create_graph(adj_mat, ver_colours, ver_name):
     rows, cols = np.where(adj_mat == 1)
