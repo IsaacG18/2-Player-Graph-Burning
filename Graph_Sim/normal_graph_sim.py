@@ -19,6 +19,7 @@ def colour_point(ver_colours, count, points, colour):
     return count
 
 def burn_graph(adj_mat, ver_colours):
+    last_ver = np.copy(ver_colours)
     red, blue = np.max(adj_mat[np.where(ver_colours == RED_NUMBER)], 0), np.max(adj_mat[np.where(ver_colours == BLUE_NUMBER)], 0)
     if np.where(ver_colours >= PURPLE_NUMBER)[0].size > 0:
         purple = np.max(adj_mat[np.where(ver_colours >= PURPLE_NUMBER)], 0)
@@ -26,7 +27,6 @@ def burn_graph(adj_mat, ver_colours):
         ver_colours += purple*PURPLE_NUMBER
     red[np.where(ver_colours!=0)]=0
     blue[np.where(ver_colours!=0)]=0
-    last_ver = np.copy(ver_colours)
     ver_colours += red+blue*BLUE_NUMBER
     return last_ver
     
@@ -65,24 +65,6 @@ def sim_graph(adj_mat, red_points, blue_points, display_amount=1):
     return ver_colours
 
 
-    
-
-def is_connected(adj_mat):
-    x = adj_mat.shape[0]  
-    
-    def dfs(node, visited):
-        visited[node] = True
-        for neighbor in range(x):
-            if adj_mat[node, neighbor] == 1 and not visited[neighbor]:
-                dfs(neighbor, visited)
-    
-    visited = [False] * x
-    
-    dfs(0, visited)
-    
-    return all(visited)
-
-
 def generate_connected_graph(x):
     con_mat = np.zeros((x,x))
     connect = [x-1]
@@ -110,35 +92,3 @@ def find_winner(adj_mat, red, blue):
         return 2
     else:
         return 0
-
-
-def check_winning_strat_single(x, num_gen=2, split_num=1):
-    adj_mat = generate_matrix(x, num_gen, split_num)
-    p1, losers = 0, []
-    if find_winner(adj_mat, [0], [1]) != 2:
-        losers.append(1)
-    else:
-        losers.append(0)
-        p1 = 1
-    for i in range(2, x):
-        if find_winner(adj_mat, [p1], [i]) != 2:
-            losers.append(i)
-        else:
-            losers.append(p1)
-            p1 = i
-            for x in losers:
-                if find_winner(adj_mat, [p1], [x]) == 2:
-                    sim_graph(adj_mat, [p1],[x],0)
-                    sim_graph(adj_mat, [p1],[losers[-1]],0)
-                    return 0
-    return 1
-        
-
-# sim_graph(generate_matrix(10, 9, 8), [1],[2],1)
-
-# for i in range(500):
-#     if not check_winning_strat_single(200):
-#         print("WOW")
-
-
-# sim_graph(generate_matrix(10), [1,0,9,6,4,5,2,3,8,7],[2,3,7,8,6,5,9,0,4,1],1)
