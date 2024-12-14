@@ -29,7 +29,7 @@ def create_path_graph_adj_matrix(n):
     for i in range(n - 1):
         adj_matrix[i, i + 1] = 1
         adj_matrix[i + 1, i] = 1
-    return 
+    return adj_matrix
 
 
 

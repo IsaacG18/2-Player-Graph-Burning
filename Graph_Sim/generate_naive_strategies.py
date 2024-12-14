@@ -9,6 +9,12 @@ class Node:
         self.ver_colour = ver_colour
 
 
+    def get_child(self, choice):
+        for child in self.children:
+            if child.choice == choice:
+                return child
+        return None
+
 def minimax_alpha_beta_return_all_best(node, depth, maximizing_player, alpha=float('-inf'), beta= float('inf')):
     if not node.children or depth == 0:
         return node.value, node.choice

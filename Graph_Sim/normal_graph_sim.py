@@ -33,7 +33,8 @@ def burn_graph(adj_mat, ver_colours):
 def get_value(ver_colours):
     return np.count_nonzero(ver_colours == RED_NUMBER) - np.count_nonzero(ver_colours == BLUE_NUMBER)
 
-def create_graph(adj_mat, ver_colours, ver_name):
+def create_graph(adj_mat, ver_colours):
+    ver_name = np.arange(ver_colours.shape[0])
     rows, cols = np.where(adj_mat == 1)
     edges = zip(rows.tolist(), cols.tolist()) 
     gr = nx.Graph()
@@ -47,10 +48,9 @@ def sim_graph(adj_mat, red_points, blue_points, display_amount=1):
     blue_count, red_count = 0,0
     ver_colours = np.zeros(adj_mat.shape[0])
     last_ver = np.zeros(ver_colours.shape[0])
-    names = np.arange(ver_colours.shape[0])
     count = 0
     if (display_amount >= 0):
-        create_graph(adj_mat, ver_colours, names)
+        create_graph(adj_mat, ver_colours)
     first = True
     while(np.sum(ver_colours-last_ver)!= 0 or first):
         first = False
@@ -58,10 +58,10 @@ def sim_graph(adj_mat, red_points, blue_points, display_amount=1):
         blue_count = colour_point(ver_colours, blue_count, blue_points, BLUE_NUMBER)
         count += 1
         if (display_amount > 0 and count%display_amount == 0):
-            create_graph(adj_mat, ver_colours, names)
+            create_graph(adj_mat, ver_colours)
         last_ver = burn_graph(adj_mat, ver_colours)
     if (display_amount >= 0):
-        create_graph(adj_mat, ver_colours, names)
+        create_graph(adj_mat, ver_colours)
     return ver_colours
 
 
