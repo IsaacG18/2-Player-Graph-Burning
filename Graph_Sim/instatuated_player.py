@@ -38,10 +38,10 @@ def update_default(args, play):
     return args
 # Setup for holtic most advantages stragegy
 def setup_hma(matrix, ver_colours, red_player, args):
-    return [matrix, ver_colours, red_player] + args + [{}]
+    return [matrix, ver_colours, red_player] + args
 # Play for holtic most advantages stragegy
 def play_hma(args):
-    play = hs.holticMostAdvantages(args[0], args[1], args[2], args[3], args[4])
+    play = hs.holticMostAdvantages(args[0], args[1], args[2], args[3])
     return args, play
 
 def setup_mc(matrix, ver_colours, red_player, args):

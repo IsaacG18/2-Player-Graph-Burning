@@ -27,9 +27,9 @@ def minimax_alpha_beta_return_all_best(node, depth, maximizing_player, alpha=flo
             if (max_eval < eval):
                 max_choice = [choice]
                 max_eval =  eval
+                alpha = max(alpha, eval)
             elif (max_eval == eval):                
                 max_choice.append(choice)
-            alpha = max(alpha, eval)
             if beta <= alpha:
                 break  
         return max_eval, (node.choice, max_choice)
@@ -41,9 +41,9 @@ def minimax_alpha_beta_return_all_best(node, depth, maximizing_player, alpha=flo
             if (min_eval > eval):
                 min_choice = [choice]
                 min_eval =  eval
+                beta = min(beta, eval)
             elif (min_eval == eval):
                 min_choice.append(choice)
-            beta = min(beta, eval)
             if beta <= alpha:
                 break 
         return min_eval, (node.choice, min_choice)
@@ -159,7 +159,7 @@ def update_tree_mini_max(adj_mat, ver_colours, parent, depth, red):
 
 def generate_tree_hashmap(adj_mat, depth, ver_colours, red, map = {}):
     root_node = Node([],0, ver_colours)
-    generate_tree_hashmap(adj_mat, ver_colours, root_node, depth, red, map)
+    update_tree_hashmap(adj_mat, ver_colours, root_node, depth, red, map)
     return root_node
     
 
@@ -199,7 +199,7 @@ def update_tree_hashmap(adj_mat, ver_colours, parent, depth, red, map):
             else:
                 cur_blue_node = Node(j, blue_cur)
                 parent.children.append(cur_blue_node)
-                update_tree_mini_max(adj_mat, blue_cur, cur_blue_node, depth-1, True, map)
+                update_tree_hashmap(adj_mat, blue_cur, cur_blue_node, depth-1, True, map)
                 if cur_blue_node.children == []:
                     cur_blue_node.value = ngs.get_value(blue_cur)
                 map[tuple(blue_cur)] = cur_blue_node
