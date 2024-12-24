@@ -9,6 +9,12 @@ class Node:
         self.ver_colour = ver_colour
 
 
+    def get_child(self, choice):
+        for child in self.children:
+            if child.choice == choice:
+                return child
+        return None
+
 def minimax_alpha_beta_return_all_best(node, depth, maximizing_player, alpha=float('-inf'), beta= float('inf')):
     if not node.children or depth == 0:
         return node.value, node.choice
@@ -156,7 +162,6 @@ def generate_tree_hashmap(adj_mat, depth, ver_colours, red, map = {}):
     generate_tree_hashmap(adj_mat, ver_colours, root_node, depth, red, map)
     return root_node
     
-    
 
 
 def update_tree_hashmap(adj_mat, ver_colours, parent, depth, red, map):
@@ -216,12 +221,7 @@ def print_tree(node, level=0):
         print_tree(child, level + 1)
 
 
-def create_path_graph_adj_matrix(n):
-    adj_matrix = np.zeros((n, n), dtype=int)
-    for i in range(n - 1):
-        adj_matrix[i, i + 1] = 1
-        adj_matrix[i + 1, i] = 1
-    return adj_matrix
+
 
 # matrix = create_path_graph_adj_matrix(7)
 # matrix[1,0], matrix[0,1] = 0, 0
