@@ -6,6 +6,7 @@ import holsticSearch as hs
 import misc as m
 import instatuated_player as ip
 import time
+import math
 
 
 # Play a game against the Navie optimial strategy
@@ -213,10 +214,11 @@ def run_human(player, matrix, ver_colours, play_first):
             
      
 
-matrix = m.create_path_graph_adj_matrix(5)
+matrix = m.create_path_graph_adj_matrix(100)
 ver_colours = np.zeros(matrix.shape[0])
 p1 = player(ip.setup_gns, ip.play_gns, ip.update_gns, [float("inf")])
 p2 = player(ip.setup_default, ip.play_hmc, ip.update_default, [3])
 p3 = player(ip.setup_hma, ip.play_hma, ip.update_default, [2])
+p4 = player(ip.setup_mc, ip.play_mc, ip.update_mc, [100,math.sqrt(2)])
 
-run(p1, p2, matrix, ver_colours, True)
+print(run(p2, p4, matrix, ver_colours, True))

@@ -1,5 +1,6 @@
 import generate_naive_strategies as gns
 import holsticSearch as hs
+import monte_carlo as mc
 
 # Setup for Naive search strategy
 def setup_gns(matrix, ver_colours, red_player, args):
@@ -40,6 +41,20 @@ def setup_hma(matrix, ver_colours, red_player, args):
 # Play for holtic most advantages stragegy
 def play_hma(args):
     play = hs.holticMostAdvantages(args[0], args[1], args[2], args[3], args[4])
+    return args, play
+
+def setup_mc(matrix, ver_colours, red_player, args):
+    return [mc.MCTS_Node(matrix, ver_colours, red_player)] + args
+
+def update_mc(args, play):
+    args[0] = args[0].perform_move(play)
+    args[0].parent = None
+    return args
+
+def play_mc(args):
+    play = mc.search(args[0], args[1], args[2])
+    args[0] = args[0].perform_move(play)
+    args[0].parent = None
     return args, play
 
 
