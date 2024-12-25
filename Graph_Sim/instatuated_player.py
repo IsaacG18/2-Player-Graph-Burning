@@ -1,7 +1,8 @@
 import generate_naive_strategies as gns
 import holsticSearch as hs
 import monte_carlo as mc
-
+import random
+import numpy as np
 # Setup for Naive search strategy
 def setup_gns(matrix, ver_colours, red_player, args):
     return [gns.generate_tree(matrix, args[0], ver_colours, red_player), red_player]
@@ -57,4 +58,7 @@ def play_mc(args):
     args[0].parent = None
     return args, play
 
-
+def setup_random(matrix, ver_colours, red_player, args):
+    return [ver_colours]
+def play_random(args):
+    return args, random.choice(np.where(args[0] == 0)[0])
