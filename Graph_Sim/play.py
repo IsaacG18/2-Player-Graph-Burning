@@ -9,6 +9,7 @@ import time
 import math
 
 
+
 # Play a game against the Navie optimial strategy
 # A player can do -1 to escape or enter a node value to play
 # Once the game is done it will start over again
@@ -214,14 +215,16 @@ def run_human(player, matrix, ver_colours, play_first):
             
 total = 0    
 for i in range(10):
-    matrix = m.create_path_graph_adj_matrix(50)
+    matrix = m.create_path_graph_adj_matrix(30)
     ver_colours = np.zeros(matrix.shape[0])
-    p1 = player(ip.setup_gns, ip.play_gns, ip.update_gns, [float("inf")])
-    p2 = player(ip.setup_default, ip.play_hmc, ip.update_default, [3])
-    p3 = player(ip.setup_hma, ip.play_hma, ip.update_default, [3])
-    p4 = player(ip.setup_mc, ip.play_mc, ip.update_mc, [100,math.sqrt(2)])
+    # p1 = player(ip.setup_gns, ip.play_gns, ip.update_gns, [float("inf")])
+    # p2 = player(ip.setup_default, ip.play_hmc, ip.update_default, [3])
+    # p3 = player(ip.setup_hma, ip.play_hma, ip.update_default, [3])
+    # p4 = player(ip.setup_mc, ip.play_mc, ip.update_mc, [100,math.sqrt(2)])
     p5 = player(ip.setup_random, ip.play_random, ip.update_default, [])
-    total += run(p2, p3, matrix, ver_colours, False)
+    p6 = player(ip.setup_default, ip.play_hihb, ip.update_default, [hs.betterThanValue])
+    p7 = player(ip.setup_default, ip.play_hhb, ip.update_default, [hs.betterThanValue])
+    total += run(p7, p5, matrix, ver_colours, False)
     if i % 10 == 0:
         print(i)
 print(total)

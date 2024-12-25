@@ -19,14 +19,23 @@ def colour_point(ver_colours, count, points, colour):
     return count
 
 def burn_graph(adj_mat, ver_colours):
-    red, blue = np.max(adj_mat[np.where(ver_colours == RED_NUMBER)], 0), np.max(adj_mat[np.where(ver_colours == BLUE_NUMBER)], 0)
+    red, blue = np.array([]),np.array([])
+    if_red, if_blue = len(np.where(ver_colours == RED_NUMBER)[0]) != 0, len(np.where(ver_colours == BLUE_NUMBER)[0]) != 0
+    
+    if if_red: red = np.max(adj_mat[np.where(ver_colours == RED_NUMBER)], 0)
+    if if_blue:blue = np.max(adj_mat[np.where(ver_colours == BLUE_NUMBER)], 0)
+
     if np.where(ver_colours >= PURPLE_NUMBER)[0].size > 0:
         purple = np.max(adj_mat[np.where(ver_colours >= PURPLE_NUMBER)], 0)
         purple[np.where(ver_colours!=0)]=0
         ver_colours += purple*PURPLE_NUMBER
-    red[np.where(ver_colours!=0)]=0
-    blue[np.where(ver_colours!=0)]=0
-    ver_colours += red+blue*BLUE_NUMBER
+    
+    if if_red: red[np.where(ver_colours!=0)]=0
+    if if_blue:blue[np.where(ver_colours!=0)]=0
+
+    if if_red: ver_colours += red
+    if if_blue: ver_colours += blue*BLUE_NUMBER
+    
     
 def get_value(ver_colours):
     return np.count_nonzero(ver_colours == RED_NUMBER) - np.count_nonzero(ver_colours == BLUE_NUMBER)
