@@ -19,7 +19,6 @@ def colour_point(ver_colours, count, points, colour):
     return count
 
 def burn_graph(adj_mat, ver_colours):
-    last_ver = np.copy(ver_colours)
     red, blue = np.max(adj_mat[np.where(ver_colours == RED_NUMBER)], 0), np.max(adj_mat[np.where(ver_colours == BLUE_NUMBER)], 0)
     if np.where(ver_colours >= PURPLE_NUMBER)[0].size > 0:
         purple = np.max(adj_mat[np.where(ver_colours >= PURPLE_NUMBER)], 0)
@@ -28,7 +27,6 @@ def burn_graph(adj_mat, ver_colours):
     red[np.where(ver_colours!=0)]=0
     blue[np.where(ver_colours!=0)]=0
     ver_colours += red+blue*BLUE_NUMBER
-    return last_ver
     
 def get_value(ver_colours):
     return np.count_nonzero(ver_colours == RED_NUMBER) - np.count_nonzero(ver_colours == BLUE_NUMBER)
@@ -59,6 +57,7 @@ def sim_graph(adj_mat, red_points, blue_points, display_amount=1):
         count += 1
         if (display_amount > 0 and count%display_amount == 0):
             create_graph(adj_mat, ver_colours)
+        last_ver = np.copy(ver_colours)
         last_ver = burn_graph(adj_mat, ver_colours)
     if (display_amount >= 0):
         create_graph(adj_mat, ver_colours)
