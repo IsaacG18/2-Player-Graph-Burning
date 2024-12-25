@@ -1,6 +1,7 @@
 import numpy as np
 import normal_graph_sim as ngs
 import generate_naive_strategies as gns
+import random
 
 
 def holticMostConnected(adj_mat, ver_colours, red_player, turns):
@@ -32,5 +33,5 @@ def holticMostConnected(adj_mat, ver_colours, red_player, turns):
     return best_choice
 
 
-def holticMostAdvantages(adj_mat, ver_colours, red_player, turns, map):
-    return gns.minimax_alpha_beta(gns.generate_tree_hashmap(adj_mat, turns, ver_colours, red_player, map), 1 , red_player)[0]
+def holticMostAdvantages(adj_mat, ver_colours, red_player, turns):
+    return random.choice(gns.minimax_alpha_beta_return_all_best(gns.generate_tree(adj_mat, turns, ver_colours, red_player), 1 , red_player)[1][1])

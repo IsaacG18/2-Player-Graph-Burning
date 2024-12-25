@@ -19,7 +19,6 @@ class MCTS_Node:
         return self.children_expanded == (len(self.get_legal_moves()))
 
     def get_legal_moves(self):
-        # print(np.where(self.ver_colour == 0)[0])
         return np.where(self.ver_colour == 0)[0]
 
     def perform_move(self, move):
