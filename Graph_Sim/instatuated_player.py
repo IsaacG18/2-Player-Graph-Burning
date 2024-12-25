@@ -60,5 +60,12 @@ def play_mc(args):
 
 def setup_random(matrix, ver_colours, red_player, args):
     return [ver_colours]
+
 def play_random(args):
     return args, random.choice(np.where(args[0] == 0)[0])
+
+def play_hihb(args):
+    return args, hs.holsitcIsolatedHighestBurn(args[0], args[1], args[3])
+
+def play_hhb(args):
+    return args, hs.holsitcHighestBurn(args[0], args[1], args[2], args[3])
