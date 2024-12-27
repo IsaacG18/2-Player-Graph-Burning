@@ -15,15 +15,15 @@
 \maketitle
 
 \begin{definition}
-A one shot 2 player burn graph denoted by \(B1\). Let G be a graph, \(G=(V,E)\). Let player 1 pick \(v\) and let player 2 pick \(u\) where \( v,u \in V \). If \(|\{ w \in V : d(v, w) < d(u, w) \}| > |\{ w \in V : d(u, w) < d(v, w) \}|\) then \(B1(G,v,u) =\) player 1 win, if \(|\{ w \in V : d(v, w) < d(u, w) \}| = |\{ w \in V : d(u, w) < d(v, w) \}|\) then \(B1(G,v,u) =\) player 1 ties, else if \(|\{ w \in V : d(v, w) < d(u, w) \}| < |\{ w \in V : d(u, w) < d(v, w) \}|\) then \(B1(G,v,u) =\) player 1 lose.
+A one shot 2 player burn graph denoted by \(B1\). Let G be a graph, \(G=(V,E)\). Let player 1 pick \(v\) and let player 2 pick \(u\) where \( v,u \in V \) and \( v ! = u \). If \(|\{ w \in V : d(v, w) < d(u, w) \}| > |\{ w \in V : d(u, w) < d(v, w) \}|\) then \(B1(G,v,u) =\) player 1 win, if \(|\{ w \in V : d(v, w) < d(u, w) \}| = |\{ w \in V : d(u, w) < d(v, w) \}|\) then \(B1(G,v,u) =\) player 1 ties, else if \(|\{ w \in V : d(v, w) < d(u, w) \}| < |\{ w \in V : d(u, w) < d(v, w) \}|\) then \(B1(G,v,u) =\) player 1 lose.
 \end{definition}
 
 \begin{definition}
-A one shot 2 player burn graph game set denoted by \(B1S\). Let G be a graph, \(G=(V,E)\). Let player 1 pick \(v\) and let player 2 pick \(u\) where \( v,u \in V \). Then \(B1S(G,v,u) = \{ w \in V : d(v, w) < d(u, w) \}\)
+A one shot 2 player burn graph game set denoted by \(B1S\). Let G be a graph, \(G=(V,E)\). Let player 1 pick \(v\) and let player 2 pick \(u\) where \( v,u \in V \) and \( v ! = u \). Then \(B1S(G,v,u) = \{ w \in V : d(v, w) < d(u, w) \}\)
 \end{definition}
 
 \begin{definition}
-A one shot 2 player burn graph game count denoted by \(B1C\). Let G be a graph, \(G=(V,E)\). Let player 1 pick \(v\) and let player 2 pick \(u\) where \( v,u \in V \). Then \(B1S(G,v,u) = |\{ w \in V : d(v, w) < d(u, w) \}| - |\{ w \in V : d(u, w) < d(v, w) \}|\)
+A one shot 2 player burn graph game count denoted by \(B1C\). Let G be a graph, \(G=(V,E)\). Let player 1 pick \(v\) and let player 2 pick \(u\) where \( v,u \in V \) and \( v ! = u \). Then \(B1S(G,v,u) = |\{ w \in V : d(v, w) < d(u, w) \}| - |\{ w \in V : d(u, w) < d(v, w) \}|\)
 \end{definition}
 
 
@@ -153,12 +153,12 @@ then\(w\)would reach\(p\)first and the total number of child nodes in the connec
 rest combine since the total number of child nodes in the connected graph that contains\(v\)is greater than the total number 
 of child nodes in the connect point that contains u. Hence this condition can not happen. 
 \\\\
-Case 4.3 Let d(v,p) < d(u,p) hence select p, then count the total number of child nodes 
-that each of the connect nodes\(p\)has. If d(u,p) < d(w,p) then the connect node that contains 
-w is less than the rest of the connect nodes combine since B1(G,u,w) is true, since d(v,p) < d(u,p) 
-then d(v,p) < d(w,p). If d(u,p) = d(w,p) then the connect node that contains 
-w is less than the connect node that contains\(u\)since B1(G,u,w) is true, since d(v,p) < d(u,p) 
-then d(v,p) < d(w,p). Final since if d(u,p) > d(w,p) then\(w\)would reach\(p\)first and 
+Case 4.3 Let \(d(v,p) < d(u,p)\) hence select p, then count the total number of child nodes 
+that each of the connect nodes\(p\)has. If \(d(u,p) < d(w,p)\) then the connect node that contains 
+w is less than the rest of the connect nodes combine since \(B1(G,u,w)\) is true, since \(d(v,p) < d(u,p)\)
+then \(d(v,p) < d(w,p)\). If \(d(u,p) = d(w,p)\) then the connect node that contains 
+w is less than the connect node that contains\(u\)since \(B1(G,u,w)\) is true, since \(d(v,p) < d(u,p)\) 
+then \(d(v,p) < d(w,p)\). Final since if \(d(u,p) > d(w,p)\) then\(w\)would reach\(p\)first and 
 the total number of child nodes in the connected point that contains\(u\)is less than the 
 rest combine since the total number of child nodes in the connected gdraph that contains\(v\)is greater than the total number 
 of child nodes in the connect point that contains u. Hence this condition can not happen. 
