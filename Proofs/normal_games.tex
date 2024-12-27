@@ -1,0 +1,78 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb, amsthm}
+
+% Define the theorem environment for the proof
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+
+\begin{document}
+
+% Title and author (optional)
+\title{Normal 2 Player Burning Game Proof of a game}
+\author{Isaac Gilbert}
+\date{} % Remove date if not needed
+\maketitle
+
+\begin{definition}
+A normal 2 player burn graph denoted by \(BG\). Let G be a graph, \(G=(V,E)\). 
+Each Vertex can be White, Blue, Red or Purple
+\\\\Each turn has 2 steps:
+\\\\Step 1, let player 1 pick \(v\) then let player 2 pick \(u\) where \( v,u \in V_{white} \). Set \(v\) to Red and \(u\) Blue.
+\\\\Step 2, For all \(v\) where \( v\in V_{white} \), let \({u_1,...,u_n}\) be all the adjacent to \(v\) where \(n\) is the number of adjacent vertexs.\\
+If \((\exists i \in {1,...n} | u_i \text{ is Purple } )\vee (\exists i,j \in {1,...n} | u_i \text{ is Blue } \wedge u_i \text{ is Red })\) then set \(v\) to Purple.\\ 
+If \((\forall i \in {1,...n} | u_i \text{ not is Purple }) \vee (\exists i \in {1,...n} \wedge \forall j \in {1,...n} | u_i \text{ is not Blue } \wedge u_j \text{ is Red })\) then set \(v\) to Red.\\ 
+If \((\forall i \in {1,...n} | u_i \text{ not is Purple }) \vee (\exists j \in {1,...n} \wedge \forall i \in {1,...n} | u_i \text{ is Blue } \wedge u_j \text{ is not Red })\) then set \(v\) to Blue.\\ 
+If \((\forall i \in {1,...n} | u_i \text{ not is Purple }) \vee (\exists i,j \in {1,...n} {1,...n} | u_i \text{ is not Blue } \wedge u_j \text{ is not Red })\) then remain \(v\) to White.\\ 
+
+The game ends when there does not exists any White vertexs.
+
+If the total number of Red vertexs is greater than the total number of Blue vertexs then it is Red Wins
+If the total number of Red vertexs is less than the total number of Blue vertexs then it is Blue Wins
+If the total number of Red vertexs is equal than the total number of Blue vertexs then it is Tie
+\end{definition}
+
+\begin{theorem}
+The maximum length of a game is $\lceil \frac{n}{3} \rceil$ where n is the number of Vertex.
+\end{theorem}
+
+\begin{proof}
+Lets be given a connected graph using the definition of \(BG\). While the set of white vertex $\le 3$ 
+then every turn both player burning 1 vertexs in step 1, let denote them be $v, u$. Hence we need to show that at least 1 is burn in step 2.
+Since burning graphs are on connected graphs then each vertex must be at least 1 path to every other vertex.
+Select the vertex $v$ and select any white vertex and then make a path between them. The vertex on this path will be denote by ${w_1, w_2,..., w_m}$
+where $m$ is the length of the path and $w_m$ is the orginal white vertex.\\\\
+If all $w \in {w_1, w_2,..., w_{m-1}}$ are white then $v$ which is adjacent to $w_1$ burns it.
+If all $w \in {w_1, w_2,..., w_{m-1}}$ are none-white then $w_{m-1}$ which is adjacent to $w_m$ burns it.
+If there exists $w \in {w_1, w_2,..., w_{m-1}}$ which is none-white and there exists $w \in {w_1, w_2,..., w_{m-1}}$ which is white,
+then select the first white vertex on the path, denote it as $w_i$ which is adjacent to $w_{i-1}$ so $w_i$ will be burnt.
+Hence while there is greater than or equal to 3 white vertex, then at least 3 vertex burn a turn.
+\end{proof}
+
+\begin{definition}
+A graph denoted with $G(V,E)$ is symmetric if for any two pairs of adjacent vertices $(u,v)$ and $(w,x)$ where $u,v,w,x \in V$, 
+there exists a bijection from the vertex set to itself that preserves adjacency that maps $(u,v)$ to  $(w,x)$.
+\end{definition}
+
+\begin{theorem}
+On any symetric graph in a 2-Player Burning Graph, player 2 can deploy a strategy to always tie.
+\end{theorem}
+
+\begin{proof}
+The aim is to show there exist a strategy guarentees to burn the same amount in step 1 and step 2 of the game.
+Let $g$ be a symetric graph denoted by $G(V,E)$. Let player 1 select $v$ that is adjacent to $u$, where $v,u \in V$. 
+As player 2 select $v'$ that is adjacent to $u'$ where $(v',u')$ uses the bijection that exists from sysmetics graph definition
+that there is mapping from $(v',u')$ to $(v,u)$. Since this preserves adjancey when player 1 burns a vertex then player 2 burns the equilecent vertexs through the bijection in step 2.
+Since there must be an even amount of vertex and $2x$ are burnt a turn where $x$ is the vertex player 1 burns.
+Therefore in step 1 the can not be a single vertex left.
+\end{proof}
+
+\begin{theorem}
+BG is PSPACE
+\end{theorem}
+
+\begin{proof}
+Let G be a graph with n vertices, using Theorem 1 hence the maximum number of turn is $\lceil \frac{n}{3} \rceil$ and each turn only 1 is select by each player limited to 1 colour, then it can be solved using a polynomial amount of space.
+\end{proof}
+
+\end{document}
