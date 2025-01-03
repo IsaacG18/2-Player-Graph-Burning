@@ -80,7 +80,8 @@ def update_tree_max_priority(adj_mat, ver_colours, parent, depth, red_player, fu
             parent.value = min_value
             if min_value < 0:
                 return
-            
+
+
 
 def update_tree_mini_priority(adj_mat, ver_colours, parent, depth, red_player, func_list, func_sort):
     if depth <= 0:
@@ -105,3 +106,71 @@ def update_tree_mini_priority(adj_mat, ver_colours, parent, depth, red_player, f
             if min_value < 0:
                 return
 
+
+def filter_search_mini_max(adj_mat, depth, ver_colours, red_player, max, func_list, func_cmp, count_min = 1, choice = 0):
+    root_node = gns.Node([],choice, ver_colours)
+    if max:
+        update_tree_max_filter(adj_mat, ver_colours, root_node, depth, red_player, func_list, func_cmp, count_min)
+    else:
+        update_tree_mini_filter(adj_mat, ver_colours, root_node, depth, red_player, func_list, func_cmp, count_min)
+    return root_node
+
+
+def update_tree_max_filter(adj_mat, ver_colours, parent, depth, red_player, func_list, func_cmp, count_min):
+    if depth <= 0:
+        return
+    if red_player:
+        max_value = float("-inf")
+        children = func_list(adj_mat, ver_colours, red_player)
+        total_value, total_turns, count = 0,0,0
+        for i,j,k in children:
+            total_value += i
+            total_turns += j
+            count += 1
+            if count < count_min or func_cmp((total_value/count, total_turns/count),(i,j,k)) :
+                red_cur, cur_red_node = gns.play_red(ver_colours,k, parent)
+                update_tree_max_filter(adj_mat, red_cur, cur_red_node, depth-1, False, func_list, func_cmp,count_min)
+                if cur_red_node.children == []:
+                    cur_red_node.value = ngs.get_value(red_cur)
+                parent.value = max(max_value, cur_red_node.value)
+                max_value = max(max_value, cur_red_node.value)
+                if max_value > 0:
+                    return
+    else:
+        min_value = float('inf')
+        for j in np.where(ver_colours == 0)[0]:
+            blue_cur, cur_blue_node = gns.play_blue(ver_colours,j, parent, adj_mat)
+            update_tree_mini_filter(adj_mat, blue_cur, cur_blue_node, depth-1, True, func_list, func_cmp, count_min)
+            min_value = gns.blue_leaf_node_value(cur_blue_node, blue_cur, min_value)
+            parent.value = min_value
+            if min_value < 0:
+                return
+            
+
+def update_tree_mini_filter(adj_mat, ver_colours, parent, depth, red_player, func_list, func_cmp, count_min):
+    if depth <= 0:
+        return
+    if red_player:
+        max_value = float("-inf")
+        for i in np.where(ver_colours == 0)[0]:
+            red_cur, cur_red_node = gns.play_red(ver_colours,i, parent)
+            update_tree_mini_filter(adj_mat, red_cur, cur_red_node, depth-1, False, func_list, func_cmp,count_min)
+            max_value = gns.red_leaf_node_value(cur_red_node, red_cur, max_value)
+            parent.value = max_value
+            if max_value > 0:
+                return
+    else:
+        min_value = float('inf')
+        children = func_list(adj_mat, ver_colours, red_player)
+        total_value, total_turns, count = 0,0,0
+        for i,j,k in children:
+            total_value += i
+            total_turns += j
+            count += 1
+            if count < count_min or func_cmp((total_value/count, total_turns/count),(i,j,k)) :
+                blue_cur, cur_blue_node = gns.play_blue(ver_colours,k, parent, adj_mat)
+                update_tree_mini_filter(adj_mat, blue_cur, cur_blue_node, depth-1, True, func_list, func_cmp, count_min)
+                min_value = gns.blue_leaf_node_value(cur_blue_node, blue_cur, min_value)
+                parent.value = min_value
+                if min_value < 0:
+                    return

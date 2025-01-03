@@ -52,7 +52,7 @@ def holsitcIsolatedHighestBurn(adj_mat, ver_colours, func):
             current += green*GREEN_NUMBER
             turns += 1
         best = func(best, (np.sum(current == GREEN_NUMBER), turns, i))
-    return best[2]
+    return best
 
 def betterThanValue(play1, play2):
     if play2[0]>play1[0]:
@@ -80,5 +80,5 @@ def holsitcHighestBurn(adj_mat, ver_colours, red_player, func):
             best = func(best, (ngs.get_value(current), turns, i))
         else:
             best = func(best, (-ngs.get_value(current), turns, i))
-    return best[2]
+    return best
 

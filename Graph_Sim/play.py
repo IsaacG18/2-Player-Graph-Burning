@@ -220,7 +220,7 @@ def run_human(player, matrix, ver_colours, play_first):
             
 total = 0    
 for i in range(1000):
-    matrix = ngs.generate_matrix(30, 10, 9)
+    matrix = ngs.generate_matrix(10, 10, 9)
     
     ver_colours = np.zeros(matrix.shape[0])
     # ngs.create_graph(matrix, ver_colours)
@@ -232,7 +232,10 @@ for i in range(1000):
     p5 = player(ip.setup_random, ip.play_random, ip.update_default, [])
     # p6 = player(ip.setup_default, ip.play_hihb, ip.update_default, [hs.betterThanValue])
     p7 = player(ip.setup_default, ip.play_hhb, ip.update_default, [hs.betterThanValue])
-    p8 = player(ip.setup_psmm, ip.play_gns, ip.update_ppms, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue])
-    total += run(p5, p8, matrix, ver_colours, False)
+    p8 = player(ip.setup_psmm, ip.play_gns, ip.update_psmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue])
+    p9 = player(ip.setup_fsmm, ip.play_gns, ip.update_fsmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue, 2])
+    total += run(p9, p5, matrix, ver_colours, False)
+    if i % 10 ==0:
+        print(total)
 print(total)
 
