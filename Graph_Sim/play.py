@@ -268,6 +268,13 @@ def test_players_random(list_players, vertex_count, num_gen, split_num, iteratio
                 if p1 != p2:
                     write_game(p1,p2,file, matrix)
                     write_game(p2,p1,file, matrix)
+def test_players_list_random(list_players_vs, vertex_count, num_gen, split_num, iterations, file):
+    for _ in range(iterations):
+        matrix = ngs.generate_matrix(vertex_count, num_gen, split_num)
+        for p1, p2 in list_players_vs:
+            if p1 != p2:
+                write_game(p1,p2,file, matrix)
+                write_game(p2,p1,file, matrix)
 
 def test_players_set(list_players, list_matrix, file):
     for matrix in list_matrix:
@@ -276,6 +283,13 @@ def test_players_set(list_players, list_matrix, file):
                 if p1 != p2:
                     write_game(p1,p2,file, matrix)
                     write_game(p2,p1,file, matrix)
+
+def test_players_list_set(list_players_vs, list_matrix, file):
+    for matrix in list_matrix:
+        for p1, p2 in list_players_vs:
+            if p1 != p2:
+                write_game(p1,p2,file, matrix)
+                write_game(p2,p1,file, matrix)
 p1 = player("GNS", ip.setup_gns, ip.play_gns, ip.update_gns, ip.reset_gns, [float("inf")])
 p1_mm = player("GNSMM",ip.setup_gns_mini_max, ip.play_gns, ip.update_gns_mini_max, ip.reset_gns_mini_max, [float("inf")])
 p2 = player("HMC",ip.setup_default, ip.play_hmc, ip.update_default, ip.reset_gns, [3])
@@ -287,3 +301,5 @@ p7 = player("HBB",ip.setup_default, ip.play_hhb, ip.update_default, ip.reset_def
 p8 = player("PSMM",ip.setup_psmm, ip.play_gns, ip.update_psmm, ip.reset_psmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue])
 p9 = player("FSMM", ip.setup_fsmm, ip.play_gns, ip.update_fsmm, ip.reset_fsmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue, 2])
 test_players_random([p1, p1_mm, p2, p3, p4, p5, p6, p7,p8, p9],10, 10, 9, 10, "test.csv")
+
+test_players_list_random([(p1, p1_mm), (p2, p3), (p4, p5), (p6, p7),(p8, p9)],10, 10, 9, 10, "test.csv")
