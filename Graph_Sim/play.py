@@ -300,6 +300,7 @@ def test_players_list_set(list_players_vs, list_matrix, file):
                 write_game(p2,p1,file, matrix)
             else:
                 write_game(p1,copy.deepcopy(p1),file, matrix)
+                
 p1 = player("GNS", ip.setup_gns, ip.play_gns, ip.update_gns, ip.reset_gns, [float("inf")])
 p1_mm = player("GNSMM",ip.setup_gns_mini_max, ip.play_gns, ip.update_gns_mini_max, ip.reset_gns_mini_max, [float("inf")])
 p2 = player("HMC",ip.setup_default, ip.play_hmc, ip.update_default, ip.reset_gns, [3])
