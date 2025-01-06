@@ -38,7 +38,7 @@ def holticMostAdvantages(adj_mat, ver_colours, red_player, turns):
     return random.choice(gns.minimax_alpha_beta_return_all_best(gns.generate_tree(adj_mat, turns, ver_colours, red_player), 1 , red_player)[1][1])
 
 def holsitcIsolatedHighestBurn(adj_mat, ver_colours, func):
-    best_value, best_turn, best_play = float("-inf"), float("inf"), -1
+    best = (float("inf"), -1, float("-inf"))
     for i in np.where(ver_colours == 0)[0]:
         turns, last, first = 0, 0, True
         current = np.copy(ver_colours)
@@ -51,18 +51,18 @@ def holsitcIsolatedHighestBurn(adj_mat, ver_colours, func):
             green[np.where(current!=0)]=0
             current += green*GREEN_NUMBER
             turns += 1
-        best_value, best_turn, best_play = func(best_value, best_turn, best_play, np.sum(current == GREEN_NUMBER), turns, i)
-    return best_play
+        best = func(best, (np.sum(current == GREEN_NUMBER), turns, i))
+    return best
 
-def betterThanValue(best_value, best_turn, best_play, cur_value, cur_turn, cur_play):
-    if cur_value>best_value:
-        return cur_value, cur_turn, cur_play
-    if cur_value == best_value and cur_turn < best_turn:
-        return cur_value, cur_turn, cur_play
-    return best_value, best_turn, best_play
+def betterThanValue(play1, play2):
+    if play2[0]>play1[0]:
+        return play2
+    if play2[0] == play1[0] and play2[1] < play1[1]:
+        return play2
+    return play1
         
 def holsitcHighestBurn(adj_mat, ver_colours, red_player, func):
-    best_turn, best_play, best_value = float("inf"), -1, float("-inf")
+    best = (float("inf"), -1, float("-inf"))
     for i in np.where(ver_colours == 0)[0]:
         turns, last, first = 0, 0, True
         current = np.copy(ver_colours)
@@ -77,7 +77,8 @@ def holsitcHighestBurn(adj_mat, ver_colours, red_player, func):
             last = np.sum(current)
             ngs.burn_graph(adj_mat, current)
         if red_player:
-            best_value, best_turn, best_play = func(best_value, best_turn, best_play, ngs.get_value(current), turns, i)
+            best = func(best, (ngs.get_value(current), turns, i))
         else:
-            best_value, best_turn, best_play = func(best_value, best_turn, best_play, -ngs.get_value(current), turns, i)
-    return best_play
+            best = func(best, (-ngs.get_value(current), turns, i))
+    return best
+

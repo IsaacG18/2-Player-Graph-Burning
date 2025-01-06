@@ -3,13 +3,22 @@ import holsticSearch as hs
 import monte_carlo as mc
 import random
 import numpy as np
+import heuristic_guided_search as hgs
 # Setup for Naive search strategy
 def setup_gns(matrix, ver_colours, red_player, args):
     return [gns.generate_tree(matrix, args[0], ver_colours, red_player), red_player]
 
 # Setup for Mini max version of the Navie search strategy
 def setup_gns_mini_max(matrix, ver_colours, red_player, args):
-    return [gns.generate_tree_mini_max(matrix, args[0], ver_colours, red_player), red_player]
+    return [gns.generate_tree_mini_max(matrix, args[0], ver_colours, red_player), red_player, matrix, ver_colours, args[0]]
+
+
+def setup_psmm(matrix, ver_colours, red_player, args):
+    return [hgs.priority_search_mini_max(matrix, args[0], ver_colours, red_player, red_player, args[1], args[2]), red_player, matrix, ver_colours, args[0], args[1], args[2]]
+
+def setup_fsmm(matrix, ver_colours, red_player, args):
+    return [hgs.filter_search_mini_max(matrix, args[0], ver_colours, red_player, red_player, args[1], args[2]), red_player, matrix, ver_colours, args[0], args[1], args[2], args[3]]
+
 
 # Setup for Hashmap version of the Navie search strategy
 def setup_gns_hashmap(matrix, ver_colours, red_player, args):
@@ -23,6 +32,27 @@ def play_gns(args):
 
 # Updates the navie turn search stragegy (works for both minimax and hashmap version)
 def update_gns(args, play):
+    args[0] = args[0].get_child(play)
+    return args
+
+def update_gns_mini_max(args, play):
+    if args[0].get_child(play) is None:
+        return [gns.generate_tree_mini_max(args[2], args[4], args[3], args[1], play), args[1], args[2], args[3], args[4]]
+    
+    args[0] = args[0].get_child(play)
+    return args
+
+def update_psmm(args, play):
+    if args[0].get_child(play) is None:
+        return   [hgs.priority_search_mini_max(args[2], args[4], args[3], args[1], args[1], args[5], args[6], play), args[1], args[2], args[3], args[4], args[5], args[6]]
+    
+    args[0] = args[0].get_child(play)
+    return args
+
+def update_fsmm(args, play):
+    if args[0].get_child(play) is None:
+        return   [hgs.filter_search_mini_max(args[2], args[4], args[3], args[1], args[1], args[5], args[6], args[7], play), args[1], args[2], args[3], args[4], args[5], args[6], args[7]]
+    
     args[0] = args[0].get_child(play)
     return args
 
@@ -65,7 +95,7 @@ def play_random(args):
     return args, random.choice(np.where(args[0] == 0)[0])
 
 def play_hihb(args):
-    return args, hs.holsitcIsolatedHighestBurn(args[0], args[1], args[3])
+    return args, hs.holsitcIsolatedHighestBurn(args[0], args[1], args[3])[2]
 
 def play_hhb(args):
-    return args, hs.holsitcHighestBurn(args[0], args[1], args[2], args[3])
+    return args, hs.holsitcHighestBurn(args[0], args[1], args[2], args[3])[2]

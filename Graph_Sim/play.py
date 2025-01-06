@@ -5,6 +5,7 @@ import generate_naive_strategies as gns
 import holsticSearch as hs
 import misc as m
 import instatuated_player as ip
+import heuristic_guided_search as hgs
 import time
 import math
 
@@ -81,20 +82,20 @@ def run(p1, p2, matrix, ver_colours, display):
     if np.any(ver_colours == 0):
         p2.setup(matrix, ver_colours, False)
         play = p2.play()
-        p1.update(play)
         ver_colours[play] += ngs.BLUE_NUMBER
         ngs.burn_graph(matrix, ver_colours)
+        p1.update(play)
     while np.any(ver_colours == 0):
         if display:
             ngs.create_graph(matrix, ver_colours)
         play = p1.play()
-        p2.update(play)
         ver_colours[play] += ngs.RED_NUMBER
+        p2.update(play)
         if np.any(ver_colours == 0):
             play = p2.play()
-            p1.update(play)
             ver_colours[play] += ngs.BLUE_NUMBER
             ngs.burn_graph(matrix, ver_colours)
+            p1.update(play)
             
     if display:
         ngs.create_graph(matrix, ver_colours)
@@ -129,12 +130,13 @@ def run_timer(p1, p2, matrix, ver_colours, display):
         play = p2.play()
         p2_times['play'] += time.time() - start_time
 
-        start_time = time.time()
-        p1.update(play)
-        p1_times['update'] += time.time() - start_time
 
         ver_colours[play] += ngs.BLUE_NUMBER
         ngs.burn_graph(matrix, ver_colours)
+
+        start_time = time.time()
+        p1.update(play)
+        p1_times['update'] += time.time() - start_time
 
     while np.any(ver_colours == 0):
         if display:
@@ -144,23 +146,25 @@ def run_timer(p1, p2, matrix, ver_colours, display):
         play = p1.play()
         p1_times['play'] += time.time() - start_time
 
+        ver_colours[play] += ngs.RED_NUMBER
+
         start_time = time.time()
         p2.update(play)
         p2_times['update'] += time.time() - start_time
 
-        ver_colours[play] += ngs.RED_NUMBER
+        
 
         if np.any(ver_colours == 0):
             start_time = time.time()
             play = p2.play()
             p2_times['play'] += time.time() - start_time
 
+            ver_colours[play] += ngs.BLUE_NUMBER
+            ngs.burn_graph(matrix, ver_colours)
+
             start_time = time.time()
             p1.update(play)
             p1_times['update'] += time.time() - start_time
-
-            ver_colours[play] += ngs.BLUE_NUMBER
-            ngs.burn_graph(matrix, ver_colours)
 
     if display:
         ngs.create_graph(matrix, ver_colours)
@@ -210,21 +214,28 @@ def run_human(player, matrix, ver_colours, play_first):
                         continue
                     ver_colours[input_value] += ngs.BLUE_NUMBER
                     ngs.burn_graph(matrix, ver_colours)
+                    player.update(input_value)
     except ValueError:
         print("Not a value input")
             
 total = 0    
-for i in range(10):
-    matrix = m.create_path_graph_adj_matrix(30)
+for i in range(1000):
+    matrix = ngs.generate_matrix(10, 10, 9)
+    
     ver_colours = np.zeros(matrix.shape[0])
+    # ngs.create_graph(matrix, ver_colours)
     # p1 = player(ip.setup_gns, ip.play_gns, ip.update_gns, [float("inf")])
+    # p1_mm = player(ip.setup_gns_mini_max, ip.play_gns, ip.update_gns_mini_max, [float("inf")])
     # p2 = player(ip.setup_default, ip.play_hmc, ip.update_default, [3])
     # p3 = player(ip.setup_hma, ip.play_hma, ip.update_default, [3])
     # p4 = player(ip.setup_mc, ip.play_mc, ip.update_mc, [100,math.sqrt(2)])
     p5 = player(ip.setup_random, ip.play_random, ip.update_default, [])
-    p6 = player(ip.setup_default, ip.play_hihb, ip.update_default, [hs.betterThanValue])
+    # p6 = player(ip.setup_default, ip.play_hihb, ip.update_default, [hs.betterThanValue])
     p7 = player(ip.setup_default, ip.play_hhb, ip.update_default, [hs.betterThanValue])
-    total += run(p7, p5, matrix, ver_colours, False)
-    if i % 10 == 0:
-        print(i)
+    p8 = player(ip.setup_psmm, ip.play_gns, ip.update_psmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue])
+    p9 = player(ip.setup_fsmm, ip.play_gns, ip.update_fsmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue, 2])
+    total += run(p9, p5, matrix, ver_colours, False)
+    if i % 10 ==0:
+        print(total)
 print(total)
+
