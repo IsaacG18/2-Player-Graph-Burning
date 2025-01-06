@@ -38,7 +38,7 @@ def holticMostAdvantages(adj_mat, ver_colours, red_player, turns):
     return random.choice(gns.minimax_alpha_beta_return_all_best(gns.generate_tree(adj_mat, turns, ver_colours, red_player), 1 , red_player)[1][1])
 
 def holsitcIsolatedHighestBurn(adj_mat, ver_colours, func):
-    best = (float("inf"), -1, float("-inf"))
+    best = (float("-inf"), float("inf"), -1)
     for i in np.where(ver_colours == 0)[0]:
         turns, last, first = 0, 0, True
         current = np.copy(ver_colours)
@@ -62,7 +62,7 @@ def betterThanValue(play1, play2):
     return play1
         
 def holsitcHighestBurn(adj_mat, ver_colours, red_player, func):
-    best = (float("inf"), -1, float("-inf"))
+    best = (float("-inf"), float("inf"), -1) 
     for i in np.where(ver_colours == 0)[0]:
         turns, last, first = 0, 0, True
         current = np.copy(ver_colours)
