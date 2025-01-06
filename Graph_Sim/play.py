@@ -8,6 +8,8 @@ import instatuated_player as ip
 import heuristic_guided_search as hgs
 import time
 import math
+import csv
+import copy
 
 
 
@@ -52,10 +54,12 @@ def play_game_optermised(matrix, ver_colours):
 
 #Player class which is a class to store a stragegy 
 class player:
-    def __init__(self, setup_fun, play_fun, update_fun, args):
+    def __init__(self, name, setup_fun, play_fun, update_fun, reset_fun, args):
+        self.name =  name
         self.setup_fun = setup_fun
         self.play_fun = play_fun
         self.update_fun = update_fun
+        self.reset_fun = reset_fun
         self.args = args
 # Setup does any precalcution the game needs and sets up the args for play
     def setup(self, matrix, ver_colours, red_player):
@@ -68,6 +72,12 @@ class player:
 # Update takes in the other players move and updates thea args
     def update(self, play):
         self.args = self.update_fun(self.args, play)
+    
+    def reset(self):
+        self.args = self.reset_fun(self.args)
+
+    def get_name(self):
+        return self.name
 
 
 # Run takes in 2 different players, a game matrix, vertex colour array for the game and bool on to displaying
@@ -99,6 +109,8 @@ def run(p1, p2, matrix, ver_colours, display):
             
     if display:
         ngs.create_graph(matrix, ver_colours)
+    p1.reset()
+    p2.reset()
     return ngs.get_value(ver_colours)
 
 # Run Timer takes in 2 different players, a game matrix, vertex colour array for the game and bool on to displaying
@@ -118,7 +130,6 @@ def run_timer(p1, p2, matrix, ver_colours, display):
         start_time = time.time()
         play = p1.play()
         p1_times['play'] += time.time() - start_time
-
         ver_colours[play] += ngs.RED_NUMBER
 
     if np.any(ver_colours == 0):
@@ -168,6 +179,8 @@ def run_timer(p1, p2, matrix, ver_colours, display):
 
     if display:
         ngs.create_graph(matrix, ver_colours)
+    p1.reset()
+    p2.reset()
 
     return ngs.get_value(ver_colours), p1_times, p2_times
 
@@ -215,27 +228,89 @@ def run_human(player, matrix, ver_colours, play_first):
                     ver_colours[input_value] += ngs.BLUE_NUMBER
                     ngs.burn_graph(matrix, ver_colours)
                     player.update(input_value)
+        player.reset()
     except ValueError:
         print("Not a value input")
             
-total = 0    
-for i in range(1000):
-    matrix = ngs.generate_matrix(10, 10, 9)
+# total = 0    
+# for i in range(1000):
+#     matrix = ngs.generate_matrix(10, 10, 9)
     
-    ver_colours = np.zeros(matrix.shape[0])
-    # ngs.create_graph(matrix, ver_colours)
-    # p1 = player(ip.setup_gns, ip.play_gns, ip.update_gns, [float("inf")])
-    # p1_mm = player(ip.setup_gns_mini_max, ip.play_gns, ip.update_gns_mini_max, [float("inf")])
-    # p2 = player(ip.setup_default, ip.play_hmc, ip.update_default, [3])
-    # p3 = player(ip.setup_hma, ip.play_hma, ip.update_default, [3])
-    # p4 = player(ip.setup_mc, ip.play_mc, ip.update_mc, [100,math.sqrt(2)])
-    p5 = player(ip.setup_random, ip.play_random, ip.update_default, [])
-    # p6 = player(ip.setup_default, ip.play_hihb, ip.update_default, [hs.betterThanValue])
-    p7 = player(ip.setup_default, ip.play_hhb, ip.update_default, [hs.betterThanValue])
-    p8 = player(ip.setup_psmm, ip.play_gns, ip.update_psmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue])
-    p9 = player(ip.setup_fsmm, ip.play_gns, ip.update_fsmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue, 2])
-    total += run(p9, p5, matrix, ver_colours, False)
-    if i % 10 ==0:
-        print(total)
-print(total)
+#     ver_colours = np.zeros(matrix.shape[0])
+#     # ngs.create_graph(matrix, ver_colours)
+#     # p1 = player(ip.setup_gns, ip.play_gns, ip.update_gns, [float("inf")])
+#     # p1_mm = player(ip.setup_gns_mini_max, ip.play_gns, ip.update_gns_mini_max, [float("inf")])
+#     # p2 = player(ip.setup_default, ip.play_hmc, ip.update_default, [3])
+#     # p3 = player(ip.setup_hma, ip.play_hma, ip.update_default, [3])
+#     # p4 = player(ip.setup_mc, ip.play_mc, ip.update_mc, [100,math.sqrt(2)])
+#     p5 = player("Random", ip.setup_random, ip.play_random, ip.update_default, [])
+#     # p6 = player(ip.setup_default, ip.play_hihb, ip.update_default, [hs.betterThanValue])
+#     p7 = player("HBB",ip.setup_default, ip.play_hhb, ip.update_default, [hs.betterThanValue])
+#     p8 = player("PSMM",ip.setup_psmm, ip.play_gns, ip.update_psmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue])
+#     p9 = player("FSMM", ip.setup_fsmm, ip.play_gns, ip.update_fsmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue, 2])
+#     total += run(p9, p5, matrix, ver_colours, False)
+#     if i % 10 ==0:
+#         print(total)
+# print(total)
 
+def write_game(p1, p2, file, matrix):
+    value, p1_times, p2_times = run_timer(p1, p2, matrix, np.zeros(matrix.shape[0]), False)
+    with open(file, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([p1.get_name(), p2.get_name(), value, 
+                        p1_times['setup'], p1_times['update'], p1_times['play'], 
+                        p2_times['setup'], p2_times['update'], p2_times['play'], np.array2string(matrix)])
+
+def test_players_random(list_players, vertex_count, num_gen, split_num, iterations, file):
+    for _ in range(iterations):
+        matrix = ngs.generate_matrix(vertex_count, num_gen, split_num)
+        for p1 in list_players:
+            for p2 in list_players:
+                if p1 != p2:
+                    write_game(p1,p2,file, matrix)
+                    write_game(p2,p1,file, matrix)
+                else:
+                    write_game(p1,copy.deepcopy(p1),file, matrix)
+
+def test_players_list_random(list_players_vs, vertex_count, num_gen, split_num, iterations, file):
+    for _ in range(iterations):
+        matrix = ngs.generate_matrix(vertex_count, num_gen, split_num)
+        for p1, p2 in list_players_vs:
+            if p1 != p2:
+                write_game(p1,p2,file, matrix)
+                write_game(p2,p1,file, matrix)
+            else:
+                write_game(p1,copy.deepcopy(p1),file, matrix)
+
+def test_players_set(list_players, list_matrix, file):
+    for matrix in list_matrix:
+        for p1 in list_players:
+            for p2 in list_players:
+                if p1 != p2:
+                    write_game(p1,p2,file, matrix)
+                    write_game(p2,p1,file, matrix)
+                else:
+                    write_game(p1,copy.deepcopy(p1),file, matrix)
+
+def test_players_list_set(list_players_vs, list_matrix, file):
+    for matrix in list_matrix:
+        for p1, p2 in list_players_vs:
+            if p1 != p2:
+                write_game(p1,p2,file, matrix)
+                write_game(p2,p1,file, matrix)
+            else:
+                write_game(p1,copy.deepcopy(p1),file, matrix)
+                
+p1 = player("GNS", ip.setup_gns, ip.play_gns, ip.update_gns, ip.reset_gns, [float("inf")])
+p1_mm = player("GNSMM",ip.setup_gns_mini_max, ip.play_gns, ip.update_gns_mini_max, ip.reset_gns_mini_max, [float("inf")])
+p2 = player("HMC",ip.setup_default, ip.play_hmc, ip.update_default, ip.reset_gns, [3])
+p3 = player("HMA",ip.setup_hma, ip.play_hma, ip.update_default, ip.reset_gns_hashmap, [3])
+p4 = player("MC",ip.setup_mc, ip.play_mc, ip.update_mc, ip.reset_mc, [100,math.sqrt(2)])
+p5 = player("Random", ip.setup_random, ip.play_random, ip.update_default, ip.reset_random, [])
+p6 = player("HIHB",ip.setup_default, ip.play_hihb, ip.update_default, ip.reset_default, [hs.betterThanValue])
+p7 = player("HBB",ip.setup_default, ip.play_hhb, ip.update_default, ip.reset_default, [hs.betterThanValue])
+p8 = player("PSMM",ip.setup_psmm, ip.play_gns, ip.update_psmm, ip.reset_psmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue])
+p9 = player("FSMM", ip.setup_fsmm, ip.play_gns, ip.update_fsmm, ip.reset_fsmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue, 2])
+test_players_random([p1, p1_mm, p2, p3, p4, p5, p6, p7,p8, p9],10, 10, 9, 10, "test.csv")
+
+# test_players_list_random([(p1, p1_mm), (p2, p3), (p4, p5), (p6, p7),(p8, p9)],10, 10, 9, 10, "test.csv")
