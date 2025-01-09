@@ -117,9 +117,9 @@ def generate_matrix_v2(x, num_gen=2, split_num=1):
     upper_triangle[np.where(upper_triangle< split_num )] = 0
     upper_triangle[np.where(upper_triangle >= split_num )] = 1
     upper_triangle = np.triu(upper_triangle, 1) 
-    adj_mat = upper_triangle + upper_triangle.T + generate_connected_graph(x)
+    adj_mat = upper_triangle + upper_triangle.T
     adj_mat[adj_mat==2]=1
-    return adj_mat
+    return generate_connected_graph_v2(adj_mat)
 
 
 def find_winner(adj_mat, red, blue):
