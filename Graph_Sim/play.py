@@ -54,13 +54,13 @@ def play_game_optermised(matrix, ver_colours):
 
 #Player class which is a class to store a stragegy 
 class player:
-    def __init__(self, name, setup_fun, play_fun, update_fun, reset_fun, args):
+    def __init__(self, name, setup_fun, play_fun, update_fun, args):
         self.name =  name
         self.setup_fun = setup_fun
         self.play_fun = play_fun
         self.update_fun = update_fun
-        self.reset_fun = reset_fun
         self.args = args
+        self.init_args = copy.deepcopy(args)
 
 # Setup does any precalcution the game needs and sets up the args for play
     def setup(self, matrix, ver_colours, red_player):
@@ -75,7 +75,7 @@ class player:
         self.args = self.update_fun(self.args, play)
 # Reset convert the arguement to what they where like at initilisation
     def reset(self):
-        self.args = self.reset_fun(self.args)
+        self.args = copy.deepcopy(self.init_args)
 # Returns the name arguement of the player
     def get_name(self):
         return self.name
@@ -293,16 +293,17 @@ def test_players_list_set(list_players_vs, list_matrix, file):
             else:
                 write_game(p1,copy.deepcopy(p1),file, matrix)
                 
-p1 = player("GNS", ip.setup_gns, ip.play_gns, ip.update_gns, ip.reset_gns, [float("inf")])
-p1_mm = player("GNSMM",ip.setup_gns_mini_max, ip.play_gns, ip.update_gns_mini_max, ip.reset_gns_mini_max, [float("inf")])
-p2 = player("HMC",ip.setup_default, ip.play_hmc, ip.update_default, ip.reset_gns, [3])
-p3 = player("HMA",ip.setup_hma, ip.play_hma, ip.update_default, ip.reset_gns_hashmap, [3])
-p4 = player("MC",ip.setup_mc, ip.play_mc, ip.update_mc, ip.reset_mc, [100,math.sqrt(2)])
-p5 = player("Random", ip.setup_random, ip.play_random, ip.update_default, ip.reset_random, [])
-p6 = player("HIHB",ip.setup_default, ip.play_hihb, ip.update_default, ip.reset_default, [hs.betterThanValue])
-p7 = player("HBB",ip.setup_default, ip.play_hhb, ip.update_default, ip.reset_default, [hs.betterThanValue])
-p8 = player("PSMM",ip.setup_psmm, ip.play_gns, ip.update_psmm, ip.reset_psmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue])
-p9 = player("FSMM", ip.setup_fsmm, ip.play_gns, ip.update_fsmm, ip.reset_fsmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue, 2])
+p1 = player("GNS", ip.setup_gns, ip.play_gns, ip.update_gns, [float("inf")])
+p1_mm = player("GNSMM",ip.setup_gns_mini_max, ip.play_gns, ip.update_gns_mini_max, [float("inf")])
+p2 = player("HMC",ip.setup_default, ip.play_hmc, ip.update_default, [3])
+p3 = player("HMA",ip.setup_hma, ip.play_hma, ip.update_default, [3])
+p4 = player("MC",ip.setup_mc, ip.play_mc, ip.update_mc, [100,math.sqrt(2)])
+p5 = player("Random", ip.setup_random, ip.play_random, ip.update_default, [])
+p6 = player("HIHB",ip.setup_default, ip.play_hihb, ip.update_default, [hs.betterThanValue])
+p7 = player("HBB",ip.setup_default, ip.play_hhb, ip.update_default, [hs.betterThanValue])
+p8 = player("PSMM",ip.setup_psmm, ip.play_gns, ip.update_psmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue])
+p9 = player("FSMM", ip.setup_fsmm, ip.play_gns, ip.update_fsmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue, 2])
 test_players_random([p1, p1_mm, p2, p3, p4, p5, p6, p7,p8, p9],10, 10, 9, 10, "test.csv")
+
 
 test_players_list_random([(p1, p1_mm), (p2, p3), (p4, p5), (p6, p7),(p8, p9)],10, 10, 9, 10, "test.csv")
