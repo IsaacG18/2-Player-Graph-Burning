@@ -249,7 +249,7 @@ def write_game(p1, p2, file, matrix):
 # test_players_random generates a matrix of a game which, every player plays against every other player on the matrix and writes it to csv file, it does this iterative times
 def test_players_random(list_players, vertex_count, num_gen, split_num, iterations, file):
     for _ in range(iterations):
-        matrix = ngs.generate_matrix(vertex_count, num_gen, split_num)
+        matrix = ngs.generate_matrix_v2(vertex_count, num_gen, split_num)
         for i in range(len(list_players)):
             for j in range(i, len(list_players)):
                 if i != j:
@@ -262,7 +262,7 @@ def test_players_random(list_players, vertex_count, num_gen, split_num, iteratio
 # test_players_list_random generates a matrix of a game which, every match up on the matrix and writes it to csv file, it does this iterative times
 def test_players_list_random(list_players_vs, vertex_count, num_gen, split_num, iterations, file):
     for _ in range(iterations):
-        matrix = ngs.generate_matrix(vertex_count, num_gen, split_num)
+        matrix = ngs.generate_matrix_v2(vertex_count, num_gen, split_num)
         for p1, p2 in list_players_vs:
             if p1 != p2:
                 write_game(p1,p2,file, matrix)

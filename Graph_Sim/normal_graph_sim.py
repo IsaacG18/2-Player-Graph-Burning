@@ -2,6 +2,8 @@ import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 import random
+from scipy.sparse.csgraph import connected_components
+from scipy.sparse import csr_matrix
 
 COLOUR_MAP = {0: 'green', 1: 'red', 2: 'blue', 3: 'purple'}
 RED_NUMBER = 1
@@ -81,7 +83,25 @@ def generate_connected_graph(x):
         con_mat[connection, i], con_mat[i, connection] = 1, 1
         connect.append(i)
     return con_mat
-        
+
+def generate_connected_graph_v2(matrix):
+    graph = csr_matrix(matrix)
+    n_components, labels = connected_components(csgraph=graph, directed=False)
+
+    if n_components == 1:
+        return matrix
+    
+    components = {i: [] for i in range(n_components)}
+    for node, label in enumerate(labels):
+        components[label].append(node)
+
+    for i in range(n_components - 1):
+        node1 = components[i][0]
+        node2 = components[i + 1][0]
+        matrix[node1][node2] = 1
+        matrix[node2][node1] = 1 
+
+    return matrix
 
 def generate_matrix(x, num_gen=2, split_num=1):
     upper_triangle = np.random.randint(0, num_gen, size=(x, x))
@@ -91,6 +111,16 @@ def generate_matrix(x, num_gen=2, split_num=1):
     adj_mat = upper_triangle + upper_triangle.T + generate_connected_graph(x)
     adj_mat[adj_mat==2]=1
     return adj_mat
+
+def generate_matrix_v2(x, num_gen=2, split_num=1):
+    upper_triangle = np.random.randint(0, num_gen, size=(x, x))
+    upper_triangle[np.where(upper_triangle< split_num )] = 0
+    upper_triangle[np.where(upper_triangle >= split_num )] = 1
+    upper_triangle = np.triu(upper_triangle, 1) 
+    adj_mat = upper_triangle + upper_triangle.T + generate_connected_graph(x)
+    adj_mat[adj_mat==2]=1
+    return adj_mat
+
 
 def find_winner(adj_mat, red, blue):
     ver = sim_graph(adj_mat, red,blue,-1)
