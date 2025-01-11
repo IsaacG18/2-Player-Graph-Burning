@@ -1,0 +1,52 @@
+# Python-related files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.swp
+*.egg-info/
+dist/
+build/
+*.log
+
+# Virtual environment directories
+venv/
+.env/
+.venv/
+ENV/
+env/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Byte-compiled or cache files
+*.pyc
+*.pkl
+
+# CSV files
+*.csv
+!*final*.csv
+
+# LaTeX-related files
+*.aux
+*.bbl
+*.blg
+*.brf
+*.fls
+*.fdb_latexmk
+*.log
+*.synctex.gz
+*.out
+*.toc
+*.lof
+*.lot
+*.nav
+*.snm
+*.dvi
+*.xdv
+*.ps
+*.pdf
+
+# Editor and OS-specific files
+.DS_Store
+Thumbs.db
