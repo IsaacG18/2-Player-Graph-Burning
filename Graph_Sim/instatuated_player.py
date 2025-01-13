@@ -6,136 +6,142 @@ import numpy as np
 import heuristic_guided_search as hgs
 import hashmap_gns as hg
 
-# Setup for Naive search strategy
-def setup_gns(matrix, ver_colours, red_player, args):
-    return {"red_player": red_player, "depth": args["depth"],"node":gns.generate_tree(matrix, args["depth"], ver_colours, red_player) }
 
-
-
-# Setup for Mini max version of the Navie search strategy
-def setup_gns_mini_max(matrix, ver_colours, red_player, args):
-    return {"red_player": red_player, "matrix": matrix, "ver_colours": ver_colours, "depth": args["depth"], "node": gns.generate_tree_mini_max(matrix, args["depth"], ver_colours, red_player)}
-
-
-# Setup for prority search on a mini max search strategy
-def setup_psmm(matrix, ver_colours, red_player, args):
-    return {"red_player": red_player, "matrix": matrix, "ver_colours": ver_colours, 
-            "depth": args["depth"], "func_list": args["func_list"], "func_sort": args["func_sort"], 
-            "node": hgs.priority_search_mini_max(matrix, args["depth"], ver_colours, red_player, red_player, args["func_list"], args["func_sort"])}
-
-# Setup for filter search on a mini max search strategy
-def setup_fsmm(matrix, ver_colours, red_player, args):
-    return {"red_player": red_player, "matrix": matrix, "ver_colours": ver_colours, 
-            "depth": args["depth"], "func_list": args["func_list"], "func_cmp": args["func_cmp"], "count_min": args["count_min"], 
-            "node": hgs.filter_search_mini_max(matrix, args["depth"], ver_colours, red_player, red_player, args["func_list"], args["func_cmp"], args["count_min"])}
-
-
-# Setup for Hashmap version of the Navie search strategy
-def setup_gns_hashmap(matrix, ver_colours, red_player, args):
-    return {"red_player": red_player,"ver_colours": ver_colours, "depth": args["depth"], "node":hg.generate_tree_hashmap(matrix, args["depth"], ver_colours, red_player, {}) }
-
-
-# Setup for default game
-def setup_default(matrix, ver_colours, red_player, args):
-    args["matrix"] = matrix
-    args["ver_colours"] = ver_colours
-    args["red_player"] = red_player
-    return args
-
-
-# Setup for Monte Carlo search stragegy
-def setup_mc(matrix, ver_colours, red_player, args):
-    args["node"] = mc.MCTS_Node(matrix, ver_colours, red_player)
-    return args
-
-# Setup for Random search stragegy
-def setup_random(matrix, ver_colours, red_player, args):
-    return {"ver_colours": ver_colours}
-
-# Updates the navie turn search stragegy 
-def update_gns(args, play):
-    args["node"] = args["node"].get_child(play)
-    return args
-
-# Updates the navie turn search with hashmap stragegy 
-def update_gns_hashmap(args, play):
-    args["node"] = args["node"].get_child_by_ver( args["ver_colours"])
-    return args
-
-
-# Updates the minimax improvement to navie turn search stragegy
-def update_gns_mini_max(args, play):
-    if args["node"].get_child(play) is None:
-        args["node"] = gns.generate_tree_mini_max(args["matrix"], args["depth"], args["ver_colours"], args["red_player"], play)
-        return args
-    args["node"] = args["node"].get_child(play)
-    return args
-
-# Updates the prority search on a mini max search strategy
-def update_psmm(args, play):
-    if args["node"].get_child(play) is None:
-        args["node"] = hgs.priority_search_mini_max(args["matrix"], args["depth"], args["ver_colours"], args["red_player"], args["red_player"], args["func_list"], args["func_sort"], play)
-        return args
+#Player class which is a class to store a stragegy 
+class player:
+    def __init__(self, name):
+        self.name =  name
+# Setup does any precalcution the game needs and sets up the args for play
+    def setup(self, matrix, ver_colours, red_player):
+        self.matrix = matrix
+        self.ver_colours = ver_colours
+        self.red_player = red_player
+# Plays a turn of the game and returns the play, updates the args if nesseary
+    def play(self):
+        pass
+# Update takes in the other players move and updates thea args
+    def update(self, play):
+        pass
+# Reset convert the arguement to what they where like at initilisation
+    def reset(self):
+        pass
+# Returns the name arguement of the player
+    def get_name(self):
+        return self.name
     
-    args["node"] = args["node"].get_child(play)
-    return args
-
-# Updates the filter search on a mini max search strategy
-def update_fsmm(args, play):
-    if args["node"].get_child(play) is None:
-        args["node"] = hgs.filter_search_mini_max(args["matrix"], args["depth"], args["ver_colours"], args["red_player"], args["red_player"], args["func_list"], args["func_cmp"], args["count_min"], play)
-        return args
+class gns_player(player):
+    def __init__(self, name, depth):
+        super().__init__(name)
+        self.depth = depth
+    def setup(self, matrix, ver_colours, red_player):
+        self.node = gns.generate_tree(matrix, self.depth, ver_colours, red_player)
+        self.red_player = red_player
+    def update(self, play):
+        self.node = self.node.get_child(play)
+    def play(self):
+        result = gns.minimax_single(self.node, self.red_player)
+        self.node = self.node.get_child(result)
+        return result
     
-    args["node"] = args["node"].get_child(play)
-    return args
+class gns_mini_max_player(gns_player):
+    def __init__(self, name, depth):
+        super().__init__(name, depth)
+    def setup(self, matrix, ver_colours, red_player):
+        player.setup(self, matrix, ver_colours, red_player)
+        self.node = gns.generate_tree_mini_max(self.matrix, self.depth, self.ver_colours, self.red_player)
+    def update(self, play):
+        if self.node.get_child(play) is None:
+            self.node = gns.generate_tree_mini_max(self.matrix, self.depth, self.ver_colours, self.red_player, play)
+            return 
+        self.node = self.node.get_child(play)
 
-# Updates default that does nothing
-def update_default(args, play):
-    return args
-
-# Updates the Monte Carlo search strategy
-def update_mc(args, play):
-    args["node"] = args["node"].perform_move(play)
-    args["node"].parent = None
-    return args
-
-# Plays the navie turn search stragegy (works for with minimax)
-def play_gns(args):
-    result = gns.minimax_single(args["node"], args["red_player"])
-    args["node"] = args["node"].get_child(result)
-    return args, result
+class gns_hashmap_player(gns_player):
+    def __init__(self, name, depth):
+        super().__init__(name, depth)
+    def setup(self, matrix, ver_colours, red_player):
+        player.setup(self, matrix, ver_colours, red_player)
+        self.node = hg.generate_tree_hashmap(matrix, self.depth, ver_colours, red_player, {})
+    def update(self, play):
+        self.node = self.node.get_child_by_ver( self.ver_colours)
+    def play(self):
+        result = hg.minimax_alpha_beta_hash(self.node, self.nodered_player, tuple(self.nodever_colours))
+        self.node = self.node.get_child(result)
+        return result
     
-# Plays the navie turn with hashmap search stragegy
-def play_gns_hashmap(args):
-    result = hg.minimax_alpha_beta_hash(args["node"], args["red_player"], tuple(args["ver_colours"]))
-    args["node"] = args["node"].get_child(result)
-    return args, result
+class psmm_player(gns_player):
+    def __init__(self, name, depth, func_list, func_sort):
+        super().__init__(name, depth)
+        self.func_list = func_list
+        self.func_sort = func_sort
+    def setup(self, matrix, ver_colours, red_player):
+        player.setup(self, matrix, ver_colours, red_player)
+        self.node = hgs.priority_search_mini_max(self.matrix, self.depth, self.ver_colours, self.red_player, self.red_player, self.func_list,  self.func_sort)
+    def update(self, play):
+        if self.node.get_child(play) is None:
+             self.node = hgs.priority_search_mini_max(self.matrix, self.depth, self.ver_colours, self.red_player, self.red_player, self.func_list,  self.func_sort, play)
+             return
+        self.node = self.node.get_child(play) 
 
-# Plays the Holtic Most Connected Search
-def play_hmc(args):
-    play = hs.holticMostConnected(args["matrix"], args["ver_colours"], args["red_player"], args["turns"])
-    return args, play
+class fsmm_player(gns_player):
+    def __init__(self, name, depth, func_list, func_cmp, count_min):
+        super().__init__(name, depth)
+        self.func_list = func_list
+        self.func_cmp = func_cmp
+        self.count_min = count_min
+    def setup(self, matrix, ver_colours, red_player):
+        player.setup(self, matrix, ver_colours, red_player)
+        self.node = hgs.filter_search_mini_max(self.matrix, self.depth, self.ver_colours, self.red_player, self.red_player, self.func_list,  self.func_cmp, self.count_min)
+    def update(self, play):
+        if self.node.get_child(play) is None:
+             self.node = hgs.filter_search_mini_max(self.matrix, self.depth, self.ver_colours, self.red_player, self.red_player, self.func_list, self.func_cmp, self.count_min, play)
+             return
+        self.node = self.node.get_child(play) 
 
-# Play for holtic most advantages stragegy
-def play_hma(args):
-    play = hs.holticMostAdvantages(args["matrix"], args["ver_colours"], args["red_player"], args["turns"])
-    return args, play
+class mc_player(player):
+    def __init__(self, name, iterations, exploration_constant):
+        super().__init__(name)
+        self.iterations = iterations
+        self.exploration_constant = exploration_constant
+    def setup(self, matrix, ver_colours, red_player):
+        self.node = mc.MCTS_Node(matrix, ver_colours, red_player)
+        super().setup(matrix, ver_colours, red_player)
+    def update(self, play):
+        self.node = self.node.perform_move(play)
+        self.node.parent = None
+    def play(self):
+        play = mc.search(self.node, self.iterations, self.exploration_constant)
+        self.node = self.node.perform_move(play)
+        self.node.parent = None
+        return play
+    
+class random_player(player):
+    def play(self):
+        return random.choice(np.where(self.ver_colours == 0)[0])
+    
+class hmc_player(player):
+    def __init__(self, name, turns):
+        self.turns = turns
+        super().__init__(name)
+    def play(self):
+        hs.holticMostConnected(self.matrix, self.ver_colours, self.red_player, self.turns)
 
-# Play for Monte Carlo Search stragegy
-def play_mc(args):
-    play = mc.search(args["node"], args["iterations"], args["exploration_constant"])
-    args["node"] = args["node"].perform_move(play)
-    args["node"].parent = None
-    return args, play
+class hma_player(player):
+    def __init__(self, name, turns):
+        self.turns = turns
+        super().__init__(name)
+    def play(self):
+        hs.holticMostAdvantages(self.matrix, self.ver_colours, self.red_player, self.turns)
 
-# Play for random which picks a random play
-def play_random(args):
-    return args, random.choice(np.where(args["ver_colours"] == 0)[0])
-
-# Play for Holsitc Isolated Highest Burn stragegy
-def play_hihb(args):
-    return args, hs.holsitcIsolatedHighestBurn(args["matrix"], args["ver_colours"], args["func"])[2]
-
-# Play for Holsitc Highest Burn stragegy
-def play_hhb(args):
-    return args, hs.holsitcHighestBurn(args["matrix"], args["ver_colours"], args["red_player"], args["func"])[2]
+class hihb_player(player):
+    def __init__(self, name, func):
+        super().__init__(name)
+        self.func = func
+    def play(self):
+        return hs.holsitcIsolatedHighestBurn(self.matrix, self.ver_colours, self.func)[2]
+    
+class hhb_player(player):
+    def __init__(self, name, func):
+        super().__init__(name)
+        self.func = func
+    def play(self):
+        return hs.holsitcHighestBurn(self.matrix, self.ver_colours, self.red_player, self.func)[2]

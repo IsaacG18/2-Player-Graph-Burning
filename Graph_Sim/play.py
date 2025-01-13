@@ -52,35 +52,6 @@ def play_game_optermised(matrix, ver_colours):
             print("Not a value input")
 
 
-#Player class which is a class to store a stragegy 
-class player:
-    def __init__(self, name, setup_fun, play_fun, update_fun, args):
-        self.name =  name
-        self.setup_fun = setup_fun
-        self.play_fun = play_fun
-        self.update_fun = update_fun
-        self.args = args
-        self.init_args = copy.deepcopy(args)
-
-# Setup does any precalcution the game needs and sets up the args for play
-    def setup(self, matrix, ver_colours, red_player):
-        self.args = self.setup_fun(matrix, ver_colours, red_player, self.args)
-
-# Plays a turn of the game and returns the play, updates the args if nesseary
-    def play(self):
-        self.args, play = self.play_fun(self.args)
-        return play 
-# Update takes in the other players move and updates thea args
-    def update(self, play):
-        self.args = self.update_fun(self.args, play)
-# Reset convert the arguement to what they where like at initilisation
-    def reset(self):
-        self.args = copy.deepcopy(self.init_args)
-# Returns the name arguement of the player
-    def get_name(self):
-        return self.name
-
-
 # Run takes in 2 different players, a game matrix, vertex colour array for the game and bool on to displaying
 # Run players a game with 2 stragies
 # Returns the final vertex colour array 
@@ -110,8 +81,6 @@ def run(p1, p2, matrix, ver_colours, display):
             
     if display:
         ngs.create_graph(matrix, ver_colours)
-    p1.reset()
-    p2.reset()
     return ngs.get_value(ver_colours)
 
 # Run Timer takes in 2 different players, a game matrix, vertex colour array for the game and bool on to displaying
@@ -180,8 +149,6 @@ def run_timer(p1, p2, matrix, ver_colours, display):
 
     if display:
         ngs.create_graph(matrix, ver_colours)
-    p1.reset()
-    p2.reset()
 
     return ngs.get_value(ver_colours), p1_times, p2_times
 
@@ -230,7 +197,6 @@ def run_human(player, matrix, ver_colours, play_first):
                     ver_colours[input_value] += ngs.BLUE_NUMBER
                     ngs.burn_graph(matrix, ver_colours)
                     player.update(input_value)
-        player.reset()
     except ValueError:
         print("Not a value input")
 
@@ -294,37 +260,17 @@ def test_players_list_set(list_players_vs, list_matrix, file):
             else:
                 write_game(p1,copy.deepcopy(p1),file, matrix)
                 
-p1 = player("GNS", ip.setup_gns, ip.play_gns, ip.update_gns, {"depth":float("inf")})
-p1_mm = player("GNSMM",ip.setup_gns_mini_max, ip.play_gns, ip.update_gns_mini_max, {"depth":float("inf")})
-p2 = player("HMC",ip.setup_default, ip.play_hmc, ip.update_default, {"turns":3})
-p3 = player("HMA",ip.setup_default, ip.play_hma, ip.update_default, {"turns":3})
-p4 = player("MC",ip.setup_mc, ip.play_mc, ip.update_mc, {"iterations":100, "exploration_constant":math.sqrt(2)})
-p5 = player("Random", ip.setup_random, ip.play_random, ip.update_default, {})
-p6 = player("HIHB",ip.setup_default, ip.play_hihb, ip.update_default, {"func":hs.betterThanValue})
-p7 = player("HBB",ip.setup_default, ip.play_hhb, ip.update_default, {"func":hs.betterThanValue})
-p8 = player("PSMM",ip.setup_psmm, ip.play_gns, ip.update_psmm, {"depth":float("inf"),  "func_list": hgs.heuristicBurnList, "func_sort":hs.betterThanValue})
-p9 = player("FSMM", ip.setup_fsmm, ip.play_gns, ip.update_fsmm, {"depth":float("inf"),  "func_list": hgs.heuristicBurnList, "func_cmp":hs.betterThanValue, "count_min": 2})
-p10 = player("Hashmap", ip.setup_gns_hashmap, ip.play_gns_hashmap, ip.update_gns_hashmap, {"depth":float("inf")})
-# test_players_random([p10, p2],10, 10, 9, 100, "test.csv")
-test_players_random([p1, p1_mm, p2, p3, p4, p5, p6, p7, p8, p9, p10],10, 10, 9, 10, "test.csv")
 
+p1_1 = ip.gns_player("GNS", float("inf"))
+p1_mm_1 = ip.gns_mini_max_player("GNSMM", float("inf"))
+p1_hash_1 = ip.gns_mini_max_player("Hashmap", float("inf"))
+p2_psmm = ip.psmm_player("PSMM", float("inf"), hgs.heuristicBurnList, hs.betterThanValue)
+p2_fsmm = ip.fsmm_player("FSMM",float("inf"), hgs.heuristicBurnList, hs.betterThanValue, 2)
+p3_mc = ip.mc_player("MC",100, math.sqrt(2))
+p3_random = ip.random_player("Random")
+p4_hma = ip.hma_player("HMA", 3)
+p4_hmc = ip.hmc_player("HMC", 3)
+p4_hihb = ip.hihb_player("HIHB", hs.betterThanValue)
+p4_hmc = ip.hhb_player("HBB", hs.betterThanValue)
 
-# test_players_list_random([(p1, p1_mm), (p2, p3), (p4, p5), (p6, p7),(p8, p9)],10, 10, 9, 10, "test.csv")
-
-
-
-
-test = np.array(([[0,1,0,0,0,0,0,0,0,0]
-,[1,0,1,0,0,0,0,0,0,0]
-,[0,1,0,1,1,0,0,0,0,0]
-,[0,0,1,0,0,1,0,0,0,0]
-,[0,0,1,0,0,0,0,0,0,0]
-,[0,0,0,1,0,0,1,0,0,0]
-,[0,0,0,0,0,1,0,1,1,0]
-,[0,0,0,0,0,0,1,0,0,1]
-,[0,0,0,0,0,0,1,0,0,0]
-,[0,0,0,0,0,0,0,1,0,0]]))
-
-# test_players_list_set([(p10, p10)], [test], "test.csv")
-
-# run_human(p10, test, np.zeros(test.shape[0]), False)
+test_players_random([p1_1, p1_mm_1, p1_hash_1, p2_psmm, p2_fsmm, p3_mc, p3_random, p4_hma, p4_hmc, p4_hihb, p4_hmc],10, 10, 9, 10, "test.csv")
