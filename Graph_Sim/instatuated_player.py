@@ -57,7 +57,7 @@ def update_gns(args, play):
     args["node"] = args["node"].get_child(play)
     return args
 
-
+# Updates the navie turn search with hashmap stragegy 
 def update_gns_hashmap(args, play):
     args["node"] = args["node"].get_child_by_ver( args["ver_colours"])
     return args
@@ -99,13 +99,13 @@ def update_mc(args, play):
     args["node"].parent = None
     return args
 
-# Plays the navie turn search stragegy (works for both minimax and hashmap version)
+# Plays the navie turn search stragegy (works for with minimax)
 def play_gns(args):
     result = gns.minimax_alpha_beta(args["node"], 1, args["red_player"])
     args["node"] = args["node"].get_child(result[1][1])
     return args, args["node"].choice
     
-# Plays the navie turn search stragegy (works for both minimax and hashmap version)
+# Plays the navie turn with hashmap search stragegy
 def play_gns_hashmap(args):
     result = hg.minimax_alpha_beta_hash(args["node"], args["red_player"], tuple(args["ver_colours"]))
     args["node"] = args["node"].get_child(result)
