@@ -14,7 +14,10 @@ class Node:
             if child.choice == choice:
                 return child
         return None
+    
 
+    
+    
 def minimax_alpha_beta_return_all_best(node, depth, maximizing_player, alpha=float('-inf'), beta= float('inf')):
     if not node.children or depth == 0:
         return node.value, node.choice
@@ -164,54 +167,8 @@ def update_tree_mini_max(adj_mat, ver_colours, parent, depth, red):
         
 
 
-def generate_tree_hashmap(adj_mat, depth, ver_colours, red, map = {}):
-    root_node = Node([],0, ver_colours)
-    update_tree_hashmap(adj_mat, ver_colours, root_node, depth, red, map)
-    return root_node
-    
 
 
-def update_tree_hashmap(adj_mat, ver_colours, parent, depth, red, map):
-    if depth <= 0:
-        return
-    if red:
-        max_value = float("-inf")
-        for i in np.where(ver_colours == 0)[0]:
-            red_cur = np.copy(ver_colours)
-            red_cur[i] += ngs.RED_NUMBER
-            if tuple(red_cur) in map:
-                cur_red_node = map[tuple(red_cur)]
-                parent.value = max(max_value, cur_red_node.value)
-                max_value = max(max_value, cur_red_node.value)
-            else:
-                cur_red_node = Node(i, red_cur)
-                parent.children.append(cur_red_node)
-                update_tree_hashmap(adj_mat, red_cur, cur_red_node, depth-1, False, map)
-                if cur_red_node.children == []:
-                    cur_red_node.value = ngs.get_value(red_cur)
-                map[tuple(red_cur)] = cur_red_node
-                parent.value = max(max_value, cur_red_node.value)
-                max_value = max(max_value, cur_red_node.value)
-                
-    else:
-        min_value = float('inf')
-        for j in np.where(ver_colours == 0)[0]:
-            blue_cur = np.copy(ver_colours)
-            blue_cur[j] += ngs.BLUE_NUMBER
-            ngs.burn_graph(adj_mat, blue_cur)
-            if tuple(blue_cur) in map:
-                cur_blue_node = map[tuple(blue_cur)]
-                parent.value = min(min_value, cur_blue_node.value)
-                min_value = min(min_value, cur_blue_node.value)
-            else:
-                cur_blue_node = Node(j, blue_cur)
-                parent.children.append(cur_blue_node)
-                update_tree_hashmap(adj_mat, blue_cur, cur_blue_node, depth-1, True, map)
-                if cur_blue_node.children == []:
-                    cur_blue_node.value = ngs.get_value(blue_cur)
-                map[tuple(blue_cur)] = cur_blue_node
-                parent.value = min(min_value, cur_blue_node.value)
-                min_value = min(min_value, cur_blue_node.value)
 
 
 def print_tree(node, level=0):
@@ -232,25 +189,5 @@ def total_leafs(node):
     if node.children == []:
         return 1
     for child in node.children:
-        # print("HERE")
         total += total_leafs(child)
     return total
-
-
-
-# matrix = create_path_graph_adj_matrix(7)
-# matrix[1,0], matrix[0,1] = 0, 0
-# matrix[0,2], matrix[2,0] = 1, 1
-# matrix = create_path_graph_adj_matrix(7)
-# matrix[1,0], matrix[0,1] = 0, 0
-# matrix[0,2], matrix[2,0] = 1, 1
-# ver_colours = np.zeros(matrix.shape[0])
-# # names = np.arange(ver_colours.shape[0])
-# ngs.create_graph(matrix, ver_colours, names)
-# root = generate_tree(matrix, 1000, np.zeros(matrix.shape[0]), True)
-# names = np.arange(ver_colours.shape[0])
-# ngs.create_graph(matrix, ver_colours, names)
-# root = generate_tree(matrix, 1000, np.zeros(matrix.shape[0]), True)
-# print_tree(root)
-
-# print(minimax_alpha_beta(root, 10, -100, 100, True))
