@@ -308,6 +308,7 @@ p10 = player("Hashmap", ip.setup_gns_hashmap, ip.play_gns_hashmap, ip.update_gns
 # test_players_random([p10, p2],10, 10, 9, 100, "test.csv")
 test_players_random([p1, p1_mm, p2, p3, p4, p5, p6, p7, p8, p9, p10],10, 10, 9, 10, "test.csv")
 
+
 # test_players_list_random([(p1, p1_mm), (p2, p3), (p4, p5), (p6, p7),(p8, p9)],10, 10, 9, 10, "test.csv")
 
 

@@ -81,7 +81,26 @@ def minimax_alpha_beta(node, depth, maximizing_player, alpha=float('-inf'), beta
                 break 
         return min_eval, [node.choice] + min_choice
 
+def minimax_single(node, maximizing_player):
+    if not node.children:
+        return -1
 
+    if maximizing_player:
+        max_eval = float('-inf')
+        max_choice = -1
+        for child in node.children:
+            if (max_eval < child.value):
+                max_choice = child.choice
+                max_eval =  child.value
+        return max_choice 
+    else:
+        min_eval = float('inf')
+        min_choice = -1
+        for child in node.children:
+            if (min_eval > child.value):
+                min_choice = child.choice
+                min_eval =  child.value
+        return min_choice
 
 def play_red(ver_colours,i, parent):
     red_cur = np.copy(ver_colours)
