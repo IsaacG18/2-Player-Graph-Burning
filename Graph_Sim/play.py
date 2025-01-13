@@ -216,16 +216,17 @@ def run_human(player, matrix, ver_colours, play_first):
                 if first_turn:
                     player.setup(matrix, ver_colours, True)
                     first_turn=False
-                ver_colours[player.play()] += ngs.RED_NUMBER_NUMBER
+                ver_colours[player.play()] += ngs.RED_NUMBER
                 if np.any(ver_colours == 0):
                     ngs.create_graph(matrix, ver_colours)
                     input_value = int(input("Enter choice or quit by entering -1: "))
-                    if input_value < 0  or input_value >= ver_colours.shape[0] or ver_colours[input_value] != 0:
+                    while input_value < 0  or input_value >= ver_colours.shape[0] or ver_colours[input_value] != 0:
                         if input_value == -1:
                             print("Quitting...")
+                            continue
                         else:
                             print("Not a value input")
-                        continue
+                            input_value = int(input("Enter choice or quit by entering -1: "))
                     ver_colours[input_value] += ngs.BLUE_NUMBER
                     ngs.burn_graph(matrix, ver_colours)
                     player.update(input_value)
@@ -293,17 +294,36 @@ def test_players_list_set(list_players_vs, list_matrix, file):
             else:
                 write_game(p1,copy.deepcopy(p1),file, matrix)
                 
-p1 = player("GNS", ip.setup_gns, ip.play_gns, ip.update_gns, [float("inf")])
-p1_mm = player("GNSMM",ip.setup_gns_mini_max, ip.play_gns, ip.update_gns_mini_max, [float("inf")])
-p2 = player("HMC",ip.setup_default, ip.play_hmc, ip.update_default, [3])
-p3 = player("HMA",ip.setup_hma, ip.play_hma, ip.update_default, [3])
-p4 = player("MC",ip.setup_mc, ip.play_mc, ip.update_mc, [100,math.sqrt(2)])
-p5 = player("Random", ip.setup_random, ip.play_random, ip.update_default, [])
-p6 = player("HIHB",ip.setup_default, ip.play_hihb, ip.update_default, [hs.betterThanValue])
-p7 = player("HBB",ip.setup_default, ip.play_hhb, ip.update_default, [hs.betterThanValue])
-p8 = player("PSMM",ip.setup_psmm, ip.play_gns, ip.update_psmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue])
-p9 = player("FSMM", ip.setup_fsmm, ip.play_gns, ip.update_fsmm, [float("inf"), hgs.heuristicBurnList, hs.betterThanValue, 2])
-test_players_random([p1, p1_mm, p2, p3, p4, p5, p6, p7,p8, p9],10, 10, 9, 10, "test.csv")
+p1 = player("GNS", ip.setup_gns, ip.play_gns, ip.update_gns, {"depth":float("inf")})
+p1_mm = player("GNSMM",ip.setup_gns_mini_max, ip.play_gns, ip.update_gns_mini_max, {"depth":float("inf")})
+p2 = player("HMC",ip.setup_default, ip.play_hmc, ip.update_default, {"turns":3})
+p3 = player("HMA",ip.setup_default, ip.play_hma, ip.update_default, {"turns":3})
+p4 = player("MC",ip.setup_mc, ip.play_mc, ip.update_mc, {"iterations":100, "exploration_constant":math.sqrt(2)})
+p5 = player("Random", ip.setup_random, ip.play_random, ip.update_default, {})
+p6 = player("HIHB",ip.setup_default, ip.play_hihb, ip.update_default, {"func":hs.betterThanValue})
+p7 = player("HBB",ip.setup_default, ip.play_hhb, ip.update_default, {"func":hs.betterThanValue})
+p8 = player("PSMM",ip.setup_psmm, ip.play_gns, ip.update_psmm, {"depth":float("inf"),  "func_list": hgs.heuristicBurnList, "func_sort":hs.betterThanValue})
+p9 = player("FSMM", ip.setup_fsmm, ip.play_gns, ip.update_fsmm, {"depth":float("inf"),  "func_list": hgs.heuristicBurnList, "func_cmp":hs.betterThanValue, "count_min": 2})
+p10 = player("Hashmap", ip.setup_gns_hashmap, ip.play_gns_hashmap, ip.update_gns_hashmap, {"depth":float("inf")})
+test_players_random([p10, p2],10, 10, 9, 100, "test.csv")
+# test_players_random([p1, p5],10, 10, 9, 10, "test.csv")
+
+# test_players_list_random([(p1, p1_mm), (p2, p3), (p4, p5), (p6, p7),(p8, p9)],10, 10, 9, 10, "test.csv")
 
 
-test_players_list_random([(p1, p1_mm), (p2, p3), (p4, p5), (p6, p7),(p8, p9)],10, 10, 9, 10, "test.csv")
+
+
+test = np.array(([[0,1,0,0,0,0,0,0,0,0]
+,[1,0,1,0,0,0,0,0,0,0]
+,[0,1,0,1,1,0,0,0,0,0]
+,[0,0,1,0,0,1,0,0,0,0]
+,[0,0,1,0,0,0,0,0,0,0]
+,[0,0,0,1,0,0,1,0,0,0]
+,[0,0,0,0,0,1,0,1,1,0]
+,[0,0,0,0,0,0,1,0,0,1]
+,[0,0,0,0,0,0,1,0,0,0]
+,[0,0,0,0,0,0,0,1,0,0]]))
+
+# test_players_list_set([(p10, p10)], [test], "test.csv")
+
+# run_human(p10, test, np.zeros(test.shape[0]), False)
