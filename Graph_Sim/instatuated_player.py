@@ -101,9 +101,9 @@ def update_mc(args, play):
 
 # Plays the navie turn search stragegy (works for both minimax and hashmap version)
 def play_gns(args):
-    result = gns.minimax_alpha_beta(args["node"], 1, args["red_player"])
-    args["node"] = args["node"].get_child(result[1][1])
-    return args, args["node"].choice
+    result = gns.minimax_single(args["node"], args["red_player"])
+    args["node"] = args["node"].get_child(result)
+    return args, result
     
 # Plays the navie turn search stragegy (works for both minimax and hashmap version)
 def play_gns_hashmap(args):
