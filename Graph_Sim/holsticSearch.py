@@ -9,9 +9,9 @@ def holticMostConnected(adj_mat, ver_colours, red_player, turns):
     best_choice = -1
     if red_player:
         best_value = float('-inf')
-        for i in np.where(ver_colours == 0)[0]:
+        for i in np.random.permutation(np.where(ver_colours == 0)[0]):
             small_value = float('inf')
-            for j in np.where(ver_colours == 0)[0]:
+            for j in np.random.permutation(np.where(ver_colours == 0)[0]):
                 if i != j:
                     current = np.copy(ver_colours)
                     current[i] += ngs.RED_NUMBER
@@ -23,7 +23,7 @@ def holticMostConnected(adj_mat, ver_colours, red_player, turns):
                 best_choice, best_value = i, small_value
     else:
         best_value = float('inf')
-        for i in np.where(ver_colours == 0)[0]:
+        for i in np.random.permutation(np.where(ver_colours == 0)[0]):
             current = np.copy(ver_colours)
             current[i] += ngs.BLUE_NUMBER
             for t in range(turns):
@@ -39,7 +39,7 @@ def holticMostAdvantages(adj_mat, ver_colours, red_player, turns):
 
 def holsitcIsolatedHighestBurn(adj_mat, ver_colours, func):
     best = (float("-inf"), float("inf"), -1)
-    for i in np.where(ver_colours == 0)[0]:
+    for i in np.random.permutation(np.where(ver_colours == 0)[0]):
         turns, last, first = 0, 0, True
         current = np.copy(ver_colours)
         current[i] += GREEN_NUMBER
@@ -63,7 +63,7 @@ def betterThanValue(play1, play2):
         
 def holsitcHighestBurn(adj_mat, ver_colours, red_player, func):
     best = (float("-inf"), float("inf"), -1) 
-    for i in np.where(ver_colours == 0)[0]:
+    for i in np.random.permutation(np.where(ver_colours == 0)[0]):
         turns, last, first = 0, 0, True
         current = np.copy(ver_colours)
         if red_player:

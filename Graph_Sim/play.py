@@ -305,8 +305,8 @@ p7 = player("HBB",ip.setup_default, ip.play_hhb, ip.update_default, {"func":hs.b
 p8 = player("PSMM",ip.setup_psmm, ip.play_gns, ip.update_psmm, {"depth":float("inf"),  "func_list": hgs.heuristicBurnList, "func_sort":hs.betterThanValue})
 p9 = player("FSMM", ip.setup_fsmm, ip.play_gns, ip.update_fsmm, {"depth":float("inf"),  "func_list": hgs.heuristicBurnList, "func_cmp":hs.betterThanValue, "count_min": 2})
 p10 = player("Hashmap", ip.setup_gns_hashmap, ip.play_gns_hashmap, ip.update_gns_hashmap, {"depth":float("inf")})
-test_players_random([p10, p2],10, 10, 9, 100, "test.csv")
-# test_players_random([p1, p5],10, 10, 9, 10, "test.csv")
+# test_players_random([p10, p2],10, 10, 9, 100, "test.csv")
+test_players_random([p1, p1_mm, p2, p3, p4, p5, p6, p7, p8, p9, p10],10, 10, 9, 10, "test.csv")
 
 # test_players_list_random([(p1, p1_mm), (p2, p3), (p4, p5), (p6, p7),(p8, p9)],10, 10, 9, 10, "test.csv")
 

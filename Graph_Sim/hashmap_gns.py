@@ -54,7 +54,7 @@ def update_tree_hashmap(adj_mat, ver_colours, parent, depth, red, map):
         return
     if red:
         max_value = float("-inf")
-        for i in np.where(ver_colours == 0)[0]:
+        for i in np.random.permutation(np.where(ver_colours == 0)[0]):
             red_cur = np.copy(ver_colours)
             red_cur[i] += ngs.RED_NUMBER
             if tuple(red_cur) + (red,) in map:
@@ -75,7 +75,7 @@ def update_tree_hashmap(adj_mat, ver_colours, parent, depth, red, map):
                 
     else:
         min_value = float('inf')
-        for j in np.where(ver_colours == 0)[0]:
+        for j in np.random.permutation(np.where(ver_colours == 0)[0]):
             blue_cur = np.copy(ver_colours)
             blue_cur[j] += ngs.BLUE_NUMBER
             ngs.burn_graph(adj_mat, blue_cur)
