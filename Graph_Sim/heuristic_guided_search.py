@@ -7,7 +7,7 @@ import random
 
 def heuristicBurnList(adj_mat, ver_colours, red_player):
     return_list = []
-    for i in np.where(ver_colours == 0)[0]:
+    for i in np.random.permutation(np.where(ver_colours == 0)[0]):
         turns, last, first = 0, 0, True
         current = np.copy(ver_colours)
         if red_player:
@@ -73,7 +73,7 @@ def update_tree_max_priority(adj_mat, ver_colours, parent, depth, red_player, fu
                 return
     else:
         min_value = float('inf')
-        for j in np.where(ver_colours == 0)[0]:
+        for j in np.random.permutation(np.where(ver_colours == 0)[0]):
             blue_cur, cur_blue_node = gns.play_blue(ver_colours,j, parent, adj_mat)
             update_tree_max_priority(adj_mat, blue_cur, cur_blue_node, depth-1, True, func_list, func_sort)
             min_value = gns.blue_leaf_node_value(cur_blue_node, blue_cur, min_value)
@@ -88,7 +88,7 @@ def update_tree_mini_priority(adj_mat, ver_colours, parent, depth, red_player, f
         return
     if red_player:
         max_value = float("-inf")
-        for i in np.where(ver_colours == 0)[0]:
+        for i in np.random.permutation(np.where(ver_colours == 0)[0]):
             red_cur, cur_red_node = gns.play_red(ver_colours,i, parent)
             update_tree_mini_priority(adj_mat, red_cur, cur_red_node, depth-1, False, func_list, func_sort)
             max_value = gns.red_leaf_node_value(cur_red_node, red_cur, max_value)
@@ -138,7 +138,7 @@ def update_tree_max_filter(adj_mat, ver_colours, parent, depth, red_player, func
                     return
     else:
         min_value = float('inf')
-        for j in np.where(ver_colours == 0)[0]:
+        for j in np.random.permutation(np.where(ver_colours == 0)[0]):
             blue_cur, cur_blue_node = gns.play_blue(ver_colours,j, parent, adj_mat)
             update_tree_mini_filter(adj_mat, blue_cur, cur_blue_node, depth-1, True, func_list, func_cmp, count_min)
             min_value = gns.blue_leaf_node_value(cur_blue_node, blue_cur, min_value)
@@ -152,7 +152,7 @@ def update_tree_mini_filter(adj_mat, ver_colours, parent, depth, red_player, fun
         return
     if red_player:
         max_value = float("-inf")
-        for i in np.where(ver_colours == 0)[0]:
+        for i in np.random.permutation(np.where(ver_colours == 0)[0]):
             red_cur, cur_red_node = gns.play_red(ver_colours,i, parent)
             update_tree_mini_filter(adj_mat, red_cur, cur_red_node, depth-1, False, func_list, func_cmp,count_min)
             max_value = gns.red_leaf_node_value(cur_red_node, red_cur, max_value)

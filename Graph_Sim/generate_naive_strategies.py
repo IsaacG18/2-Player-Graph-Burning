@@ -138,14 +138,14 @@ def update_tree(adj_mat, ver_colours, parent, depth, red):
         return
     if red:
         max_value = float("-inf")
-        for i in np.where(ver_colours == 0)[0]:
+        for i in np.random.permutation(np.where(ver_colours == 0)[0]):
             red_cur, cur_red_node = play_red(ver_colours,i, parent)
             update_tree(adj_mat, red_cur, cur_red_node, depth-1, False)
             max_value = red_leaf_node_value(cur_red_node, red_cur, max_value)
             parent.value = max_value
     else:
         min_value = float('inf')
-        for j in np.where(ver_colours == 0)[0]:
+        for j in np.random.permutation(np.where(ver_colours == 0)[0]):
             blue_cur, cur_blue_node = play_blue(ver_colours,j, parent, adj_mat)
             update_tree(adj_mat, blue_cur, cur_blue_node, depth-1, True)
             if cur_blue_node.children == []:
@@ -167,7 +167,7 @@ def update_tree_mini_max(adj_mat, ver_colours, parent, depth, red):
         return
     if red:
         max_value = float("-inf")
-        for i in np.where(ver_colours == 0)[0]:
+        for i in np.random.permutation(np.where(ver_colours == 0)[0]):
             red_cur, cur_red_node = play_red(ver_colours,i, parent)
             update_tree_mini_max(adj_mat, red_cur, cur_red_node, depth-1, False)
             max_value = red_leaf_node_value(cur_red_node, red_cur, max_value)
@@ -176,7 +176,7 @@ def update_tree_mini_max(adj_mat, ver_colours, parent, depth, red):
                 return
     else:
         min_value = float('inf')
-        for j in np.where(ver_colours == 0)[0]:
+        for j in np.random.permutation(np.where(ver_colours == 0)[0]):
             blue_cur, cur_blue_node = play_blue(ver_colours,j, parent, adj_mat)
             update_tree_mini_max(adj_mat, blue_cur, cur_blue_node, depth-1, True)
             min_value = blue_leaf_node_value(cur_blue_node, blue_cur, min_value)
