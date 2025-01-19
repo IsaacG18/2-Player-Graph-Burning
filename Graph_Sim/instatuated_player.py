@@ -123,14 +123,14 @@ class hmc_player(player):
         self.turns = turns
         super().__init__(name)
     def play(self):
-        hs.holticMostConnected(self.matrix, self.ver_colours, self.red_player, self.turns)
+        return hs.holticMostConnected(self.matrix, self.ver_colours, self.red_player, self.turns)
 
 class hma_player(player):
     def __init__(self, name, turns):
         self.turns = turns
         super().__init__(name)
     def play(self):
-        hs.holticMostAdvantages(self.matrix, self.ver_colours, self.red_player, self.turns)
+        return hs.holticMostAdvantages(self.matrix, self.ver_colours, self.red_player, self.turns)
 
 class hihb_player(player):
     def __init__(self, name, func):

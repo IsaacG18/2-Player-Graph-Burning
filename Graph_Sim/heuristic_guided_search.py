@@ -4,6 +4,7 @@ import holsticSearch as hs
 import generate_naive_strategies as gns
 import random
 
+GREEN_NUMBER = -1
 
 def heuristicBurnList(adj_mat, ver_colours, red_player):
     return_list = []
@@ -26,7 +27,22 @@ def heuristicBurnList(adj_mat, ver_colours, red_player):
             return_list.append((-ngs.get_value(current), turns, i))
     return return_list 
 
-
+def heuristicBurnListIsolated(adj_mat, ver_colours, red_player):
+    return_list = []
+    for i in np.random.permutation(np.where(ver_colours == 0)[0]):
+        turns, last, first = 0, 0, True
+        current = np.copy(ver_colours)
+        current[i] += GREEN_NUMBER
+        while last - np.sum(current)!= 0 or first:
+            if first == True:
+                first = False
+            last = np.sum(current)
+            green = np.max(adj_mat[np.where(current == GREEN_NUMBER)], 0)
+            green[np.where(current!=0)]=0
+            current += green*GREEN_NUMBER
+            turns += 1
+        return_list.append((np.sum(current == GREEN_NUMBER), turns, i))
+    return return_list 
 
 
 
