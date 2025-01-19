@@ -44,11 +44,11 @@ Thus, there is exactly one path between any two vertices in a tree.
 \end{proof}
 
 \begin{definition}
-Let G be a tree, \(G=(V,E)\). Let \( v,u,w \in V \) then \(v\) is between \(w\) and \(u\) if the path from \(v\) to \(u\) does not contain \(w\) and  the path from \(v\) to \(w\) does not contain \(u\).
+Let \(G\) be a tree, \(G=(V,E)\). Let \( v,u,w \in V \) then \(v\) is between \(w\) and \(u\) if the path from \(v\) to \(u\) does not contain \(w\) and  the path from \(v\) to \(w\) does not contain \(u\).
 \end{definition}
 
 \begin{definition}
-Let G be a tree, \(G=(V,E)\). Let \( v,u,w \in V \) then \(v\) is behind \(w\) from \(u\) if the path from \(v\) to \(u\) contains \(w\).
+Let \(G\) be a tree, \(G=(V,E)\). Let \( v,u,w \in V \) then \(v\) is behind \(w\) from \(u\) if the path from \(v\) to \(u\) contains \(w\).
 \end{definition}
 
 
@@ -98,7 +98,7 @@ Finally we need to find a vertex that is in \(B1S(G,v_1, v_2)\) that is not in \
 \end{proof}
 
 \begin{theorem}
-Let G be a tree, then player 1 can always win or draw 1 shot burning graph.
+Let \(G\) be a tree, then player 1 can always win or draw 1 shot burning graph.
 \end{theorem}
 
 \begin{proof}
@@ -109,9 +109,19 @@ Using Lemma 4, we know that the optimal strategy for player 2 is to select an ad
 Thus, since each of player 1's child vertices has a count of nodes that is less than or equal to that of the other vertices, player 2’s choices are constrained to those with fewer or equal nodes. Consequently, player 2 can only achieve a tie or lose to player 1.
 \end{proof}
 
+\begin{definition}
+Let \(G\) be a tree and \( p,u \in V \) where \(u\) is adjacent to \(p\). 
+Define \(CNC(p,u,G)\) as the total number of vertexs that \(u\) has a path to that does not include \(p\). 
+Define \(CNS(p,u,G)\) as the set of vertexs that \(u\) has a path to that does not include \(p\). 
+\end{definition}
+
+\begin{definition}
+Let \(G\) be a tree and \( p,v \in V \). 
+Define \(PTN(p,v,G)\) be the adjacent node to \(p\) that has a path to \(v\) that does not contain \(p\).
+\end{definition}'
 
 \begin{theorem}
-Let G be a tree, then if B1(G,v,u) is red win or draw and if B1(G,u,w) is red win or draw then B1(G,v,w) is red win or draw 
+Let \(G\) be a tree, then if \(B1(G,v,u)\) is red win or draw and if B1(G,u,w) is red win or draw then B1(G,v,w) is red win or draw 
 \end{theorem}
 
 \begin{proof}
@@ -132,36 +142,151 @@ Using Lemma 4 since \(w\) is on the path to \(v\) to \(u\) then \(w\) burns more
 Case 4 let \(u\) to \(w\) with \(v\)  not being on the path, \(v\) to \(u\)  with \(w\)  not being on the path, and \(v\) to \(u\),  with \(u\)  not being on the path.
 \\ \\
 Let \(p\) a vertex that intersects the 3 paths.
+\\ \\
+Let \(p_{adj}\) be the set of adjacent vertexs.
 \\\\
 Lets split Case 4 up into cases
 \\\\
-Case 4.1: Let \(d(v,p) > d(u,p)\) hence select \(p\), then count the total number of child nodes that each of the connect nodes\(p\)has. 
-Since\(u\)reaches\(p\)before\(v\)does then the total of the adjacent node that contains\(v\)is greater than any of the other combine. 
-Hence for \(B1(G,u,w)\) to be true then \(d(u,p) <= d(w,p).\) Hence since\(w\)against\(v\)will burn the same or less of tree connect to\(p\)
-that includes\(v\)then \(B1(G,v,w)\) is true since \(B1C(G,v,w) >= B1(G,v,u)\).
+Case 4.1: Let \(d(v,p) > d(u,p)\) \\\\
+Since \(u\) reaches \(p\) before \(v\) does, then 
+\\
+
+\(d(v,p_a) > d(u,p_a), \forall p_a \in p_{adj}/PTN(p,v,G)\).
 \\\\
-Case 4.2: Let \(d(v,p) = d(u,p)\) hence select \(p\), then count the total number of child nodes 
-that each of the connect nodes\(p\)has. Then the connect node that contains\(v\)must have a greater 
-total the the connect node that contains \(u\). \(If d(u,p) < d(w,p)\) then the connect node that contains 
-\(w\) is less than the rest of the connect nodes combine since \(B1(G,u,w)\) is true, since \(d(v,p) = d(u,p)\) 
-then \(d(v,p) < d(w,p)\). If \(d(u,p) = d(w,p)\) then total number of child nodes of the connected node that 
-containts\(v\)is greater than the total number of child noces of the connected node that containds\(u\)and 
-the total number of child nodes of the connected node that containts\(u\)is greater than the total number of child 
-noces of the connected node that containds\(w\)then total number of child nodes of the connected node that containts\(v\)
-is greater than the total number of child noces of the connected node that containds w. Final since if \(d(u,p) > d(w,p)\) 
-then\(w\)would reach\(p\)first and the total number of child nodes in the connected point that contains\(u\)is less than the 
-rest combine since the total number of child nodes in the connected graph that contains\(v\)is greater than the total number 
-of child nodes in the connect point that contains u. Hence this condition can not happen. 
+Implies
+\\
+
+\(B1S(G,v,u) \subseteq CNS(p,PTN(p,v,G),G)\) 
 \\\\
-Case 4.3 Let \(d(v,p) < d(u,p)\) hence select p, then count the total number of child nodes 
-that each of the connect nodes\(p\)has. If \(d(u,p) < d(w,p)\) then the connect node that contains 
-w is less than the rest of the connect nodes combine since \(B1(G,u,w)\) is true, since \(d(v,p) < d(u,p)\)
-then \(d(v,p) < d(w,p)\). If \(d(u,p) = d(w,p)\) then the connect node that contains 
-w is less than the connect node that contains\(u\)since \(B1(G,u,w)\) is true, since \(d(v,p) < d(u,p)\) 
-then \(d(v,p) < d(w,p)\). Final since if \(d(u,p) > d(w,p)\) then\(w\)would reach\(p\)first and 
-the total number of child nodes in the connected point that contains\(u\)is less than the 
-rest combine since the total number of child nodes in the connected gdraph that contains\(v\)is greater than the total number 
-of child nodes in the connect point that contains u. Hence this condition can not happen. 
+and that 
+\\
+
+\(\bigcup_{\substack{p_a = p_{adj}/PTN(p, v, G)}} CNS(p,p_a,G) \subseteq  B1S(G,u,v)\).
+\\\\
+Hence
+\\
+
+\(CNC(p,PTN(p,v,G),G) \ge B1C(G,v,u) \ge B1C(G,u,v) \ge \sum_{\substack{p_a=p_{adj}/PTN(p,v,G)}} CNC(p,p_a,G) \)
+\\\\
+Therefore if \(B1(G,u,w)\) to be true then \(d(u,p) \ge d(w,p)\) or \(w\) would burn \(CNS(p,PTN(p,v,G),G)\) vertexs.
+Hence since \(v\) against \(w\) will burn the same or more of \(CNS(p,PTN(p,v,G),G) \) than  \(v\) against \(u\)
+and than hence since \(w\) against \(v\) will burn the same or more of \(CNS(p,PTN(p,v,G),G) \) than \(u\) against \(v\).
+then \(B1(G,v,w)\) is true.
+\\\\
+Case 4.2: Let \(d(v,p) = d(u,p)\) then 
+\\
+
+\(B1S(G,v,u) = CNS(p,PTN(p,v,G),G)\) 
+\\\\
+and that
+\\
+
+\(B1S(G,u,v) = CNS(p,PTN(p,u,G),G)\) 
+\\\\
+Hence
+\\
+
+\(CNC(p,PTN(p,v,G),G) > CNS(p,PTN(p,u,G),G) \)
+\\\\
+
+Assume \(d(w,p) < d(u,p)\) then \(w\) reaches \(p\) first and burn \(p_{adj}/PTN(p, u, G)\) against u,
+however this is a contraction since it implies
+\\
+
+\(\bigcup_{\substack{p_a = p_{adj}/PTN(p, u, G)}} CNS(p,p_a,G) \subseteq  B1S(G,w,u)\).
+\\\\
+and 
+\\
+
+\(B1S(G,u,w) \subseteq  CNS(p,PTN(p,u,G),G)\).
+\\\\
+which implies
+
+\(B1C(G,v,u) \ge \sum_{\substack{p_a=p_{adj}/PTN(p,u,G)}} > CNC(p,PTN(p,u,G),G) \ge B1S(G,u,w) \)
+\\\\
+This would mean that \(B1(G,u,w)\) is false which means \(d(w,p) \ge d(u,p)\). 
+If \(d(w,p) = d(u,p)\) then 
+\\
+
+\(B1S(G,v,w) = CNS(p,PTN(p,v,G),G) = B1S(G,v,u)\) 
+\\
+
+\(B1S(G,w,u) = CNS(p,PTN(p,w,G),G) = B1S(G,w,v)\)
+\\
+
+\(B1S(G,u,v) = CNS(p,PTN(p,u,G),G) = B1S(G,u,w)\)
+\\\\
+Hence since
+\\
+
+\(CNS(p,PTN(p,v,G),G) \ge CNS(p,PTN(p,w,G),G) \ge CNS(p,PTN(p,w,G),G) \)
+\\\\
+Then that means that \(B1(G,v,w)\) must hold. Finally if \(d(w,p) > d(u,p)\) then \(v\) and \(u\) will burn \(p_{adj}/PTN(p, w, G)\) against \(w\),
+also since they reach \(p\) at the same time they will burn \(CNS(p,PTN(p,w,G),G)\), hence since \(B1(G,u,w)\) is true then \(B1(G,v,w)\). 
+Therefore Case 4.2 holds.
+\\\\
+Case 4.3 Let \(d(v,p) < d(u,p)\) then if \(d(w,p) > d(u,p)\) then \(v\) and \(u\) will burn \(p_{adj}/PTN(p, w, G)\) against \(w\),
+also since \(v\) reach \(p\) before \(u\) they \(v\) will burn \(CNS(p,PTN(p,w,G),G)\), hence since \(B1(G,u,w)\) is true then \(B1(G,v,w)\).
+If \(d(w,p) = d(u,p)\), 
+\\
+
+\(B1S(G,w,u) = CNS(p,PTN(p,w,G),G)\)
+\\\\
+and that
+\\
+
+\(B1S(G,u,w) = CNS(p,PTN(p,u,G),G)\)
+\\\\
+implies
+\\
+
+\(CNC(p,PTN(p,w,G),G) < CNC(p,PTN(p,u,G),G)\)
+\\\\
+Since that \(v\) will burn \(p_{adj}/PTN(p, w, G)\) against \(w\) then \(B1(G,v,w)\) is true.
+Assumme \(d(w,p) < d(u,p)\) and \(d(w,p) \le d(v,p)\). 
+Since \(w\) reach \(p\) against before than or equal to \(v\) they \(w\) will burn more than or equal to \(v\) against \(u\) of \(CNS(p,PTN(p,u,G),G)\)
+and since \(w\) will burn \(p_{adj}/PTN(p, u, G)\) against \(u\) then if \(B1(G,v,u)\) is true then \(B1(G,u,w)\) is false which is a contraction.
+If \(d(w,p) < d(u,p)\) and \(d(w,p) > d(v,p)\) implies \(w\) reaches \(p\) before \(u\) does, then 
+\\
+
+\(d(u,p_a) > d(w,p_a), \forall p_a \in p_{adj}/PTN(p,u,G)\).
+\\\\
+Implies
+\\
+
+\(B1S(G,u,w) \subseteq CNS(p,PTN(p,u,G),G)\) 
+\\\\
+and that 
+\\
+
+\(\bigcup_{\substack{p_a = p_{adj}/PTN(p, u, G)}} CNS(p,p_a,G) \subseteq  B1S(G,w,u)\).
+\\\\
+Hence
+\\
+
+\(CNC(p,PTN(p,u,G),G) \ge B1C(G,u,w) \ge B1C(G,w,u) \ge \sum_{\substack{p_a=p_{adj}/PTN(p,u,G)}} CNC(p,p_a,G) \)
+\\\\
+Since it is assumed that \(v\) reaches \(p\) before \(w\) implies
+\\
+
+\(d(w,p_a) > d(v,p_a), \forall p_a \in p_{adj}/PTN(p,v,G)\).
+\\\\
+Implies
+\\
+
+\( CNS(p,PTN(p,u,G),G) \subseteq \bigcup_{\substack{p_a = p_{adj}/PTN(p, u, G)}} CNS(p,p_a,G) \subseteq B1S(G,v,w)\)
+\\\\
+and that
+\\
+\(B1S(G,w,v) \subseteq CNS(p,PTN(p,w,G),G)\) 
+\\\\
+Since
+\\
+
+\(\sum_{\substack{p_a=p_{adj}/PTN(p,u,G)}} CNC(p,p_a,G) \ge CNC(p,PTN(p,w,G),G) \)
+
+
+Hence \(B1(G,v,w)\) is true and since 4.3 holds and all cases hold then the theorem is true.
 \end{proof}
 
 
