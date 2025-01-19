@@ -145,6 +145,7 @@ def generate_matrix_v2(x, num_gen=2, split_num=1):
     upper_triangle = np.triu(upper_triangle, 1) 
     adj_mat = upper_triangle + upper_triangle.T
     adj_mat[adj_mat==2]=1
+    np.fill_diagonal(adj_mat, 0)
     return generate_connected_graph_v2(adj_mat)
 
 # find_winner takes in an adjancy matrix, and a set of red points and blue points
