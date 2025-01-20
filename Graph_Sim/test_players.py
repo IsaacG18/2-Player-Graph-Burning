@@ -1,4 +1,4 @@
-import Graph_Sim.heurstic_search as hs
+import heurstic_search as hs
 import instatuated_player as ip
 import heuristic_guided_search as hgs
 import play as p
@@ -37,6 +37,9 @@ fdm_set = ip.fdm_set_player("FDM_SET")
 hib = ip.hib_player("HIB", hs.better_than_value)
 hsb = ip.hsb_player("HBB", hs.better_than_value)
 
+ALL_PLAYERS = [gns, gns_dfs , gns_hash, gp_dfs_sim, f_dfs_sim,gp_dfs_iso, f_dfs_iso, 
+                mc, random, fdm_1, fdm_2, fdm_3, fdm_4, fdm_set, hib, hsb,
+                hkn_1, hkn_2, hkn_3, hkn_4, hkn_5, hkn_6, hkn_7, hkn_8, hkn_9, hkn_10]
 
 def test_players(list_players, vertex_count, iterations, file, folder):
     p.test_players_random(list_players, vertex_count, NUMBER_GEN, SPLIT_HIGH, iterations, "HIGH_"+file, folder)
@@ -66,7 +69,5 @@ def test_heurisitic():
     test_players(hp, 90, 100, "Heurisitic_90.csv", "data_heuristic")
     test_players(hp, 100, 100, "Heurisitic_100.csv", "data_heuristic")
    
-
-
-test_heurisitic()
+test_players(ALL_PLAYERS, 10, 10, "test.csv", "")
 

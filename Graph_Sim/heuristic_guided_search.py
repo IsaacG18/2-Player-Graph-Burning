@@ -1,6 +1,6 @@
 import numpy as np
 import normal_graph_sim as ngs
-import Graph_Sim.heurstic_search as hs
+import heurstic_search as hs
 import generate_naive_strategies as gns
 import random
 

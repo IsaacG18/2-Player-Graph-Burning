@@ -1,5 +1,5 @@
 import generate_naive_strategies as gns
-import Graph_Sim.heurstic_search as hs
+import heurstic_search as hs
 import monte_carlo as mc
 import random
 import numpy as np
@@ -64,7 +64,7 @@ class gns_hashmap_player(gns_player):
     def update(self, play):
         self.node = self.node.get_child_by_ver( self.ver_colours)
     def play(self):
-        result = hg.minimax_alpha_beta_hash(self.node, self.nodered_player, tuple(self.nodever_colours))
+        result = hg.minimax_alpha_beta_hash(self.node, self.red_player, tuple(self.ver_colours))
         self.node = self.node.get_child(result)
         return result
     
