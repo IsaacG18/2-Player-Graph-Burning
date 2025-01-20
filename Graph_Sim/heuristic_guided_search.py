@@ -1,12 +1,12 @@
 import numpy as np
 import normal_graph_sim as ngs
-import holsticSearch as hs
+import heurstic_search as hs
 import generate_naive_strategies as gns
 import random
 
 GREEN_NUMBER = -1
 
-def heuristicBurnList(adj_mat, ver_colours, red_player):
+def heuristic_simulated_burn_list(adj_mat, ver_colours, red_player):
     return_list = []
     for i in np.random.permutation(np.where(ver_colours == 0)[0]):
         turns, last, first = 0, 0, True
@@ -27,7 +27,7 @@ def heuristicBurnList(adj_mat, ver_colours, red_player):
             return_list.append((-ngs.get_value(current), turns, i))
     return return_list 
 
-def heuristicBurnListIsolated(adj_mat, ver_colours, red_player):
+def heuristic_isolated_burn_list(adj_mat, ver_colours, red_player):
     return_list = []
     for i in np.random.permutation(np.where(ver_colours == 0)[0]):
         turns, last, first = 0, 0, True
@@ -62,7 +62,7 @@ def sort_list(list, func):
     return sort_list(greater, func)+ [pivot] + sort_list(less, func)
     
 
-def priority_search_mini_max(adj_mat, depth, ver_colours, red_player, max, func_list, func_sort, choice = 0):
+def guided_priority_dfs(adj_mat, depth, ver_colours, red_player, max, func_list, func_sort, choice = 0):
     root_node = gns.Node([],choice, ver_colours)
     if max:
         update_tree_max_priority(adj_mat, ver_colours, root_node, depth, red_player, func_list, func_sort)
@@ -123,7 +123,7 @@ def update_tree_mini_priority(adj_mat, ver_colours, parent, depth, red_player, f
                 return
 
 
-def filter_search_mini_max(adj_mat, depth, ver_colours, red_player, max, func_list, func_cmp, count_min = 1, choice = 0):
+def filter_dfs(adj_mat, depth, ver_colours, red_player, max, func_list, func_cmp, count_min = 1, choice = 0):
     root_node = gns.Node([],choice, ver_colours)
     if max:
         update_tree_max_filter(adj_mat, ver_colours, root_node, depth, red_player, func_list, func_cmp, count_min)
