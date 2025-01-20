@@ -1,5 +1,5 @@
 import generate_naive_strategies as gns
-import holsticSearch as hs
+import Graph_Sim.heurstic_search as hs
 import monte_carlo as mc
 import random
 import numpy as np
@@ -43,15 +43,15 @@ class gns_player(player):
         self.node = self.node.get_child(result)
         return result
     
-class gns_mini_max_player(gns_player):
+class gns_dfs_player(gns_player):
     def __init__(self, name, depth):
         super().__init__(name, depth)
     def setup(self, matrix, ver_colours, red_player):
         player.setup(self, matrix, ver_colours, red_player)
-        self.node = gns.generate_tree_mini_max(self.matrix, self.depth, self.ver_colours, self.red_player)
+        self.node = gns.generate_tree_dfs(self.matrix, self.depth, self.ver_colours, self.red_player)
     def update(self, play):
         if self.node.get_child(play) is None:
-            self.node = gns.generate_tree_mini_max(self.matrix, self.depth, self.ver_colours, self.red_player, play)
+            self.node = gns.generate_tree_dfs(self.matrix, self.depth, self.ver_colours, self.red_player, play)
             return 
         self.node = self.node.get_child(play)
 
@@ -68,21 +68,21 @@ class gns_hashmap_player(gns_player):
         self.node = self.node.get_child(result)
         return result
     
-class psmm_player(gns_player):
+class gp_dfs_player(gns_player):
     def __init__(self, name, depth, func_list, func_sort):
         super().__init__(name, depth)
         self.func_list = func_list
         self.func_sort = func_sort
     def setup(self, matrix, ver_colours, red_player):
         player.setup(self, matrix, ver_colours, red_player)
-        self.node = hgs.priority_search_mini_max(self.matrix, self.depth, self.ver_colours, self.red_player, self.red_player, self.func_list,  self.func_sort)
+        self.node = hgs.guided_priority_dfs(self.matrix, self.depth, self.ver_colours, self.red_player, self.red_player, self.func_list,  self.func_sort)
     def update(self, play):
         if self.node.get_child(play) is None:
-             self.node = hgs.priority_search_mini_max(self.matrix, self.depth, self.ver_colours, self.red_player, self.red_player, self.func_list,  self.func_sort, play)
+             self.node = hgs.guided_priority_dfs(self.matrix, self.depth, self.ver_colours, self.red_player, self.red_player, self.func_list,  self.func_sort, play)
              return
         self.node = self.node.get_child(play) 
 
-class fsmm_player(gns_player):
+class f_dfs_player(gns_player): 
     def __init__(self, name, depth, func_list, func_cmp, count_min):
         super().__init__(name, depth)
         self.func_list = func_list
@@ -90,10 +90,10 @@ class fsmm_player(gns_player):
         self.count_min = count_min
     def setup(self, matrix, ver_colours, red_player):
         player.setup(self, matrix, ver_colours, red_player)
-        self.node = hgs.filter_search_mini_max(self.matrix, self.depth, self.ver_colours, self.red_player, self.red_player, self.func_list,  self.func_cmp, self.count_min)
+        self.node = hgs.filter_dfs(self.matrix, self.depth, self.ver_colours, self.red_player, self.red_player, self.func_list,  self.func_cmp, self.count_min)
     def update(self, play):
         if self.node.get_child(play) is None:
-             self.node = hgs.filter_search_mini_max(self.matrix, self.depth, self.ver_colours, self.red_player, self.red_player, self.func_list, self.func_cmp, self.count_min, play)
+             self.node = hgs.filter_dfs(self.matrix, self.depth, self.ver_colours, self.red_player, self.red_player, self.func_list, self.func_cmp, self.count_min, play)
              return
         self.node = self.node.get_child(play) 
 
@@ -118,30 +118,37 @@ class random_player(player):
     def play(self):
         return random.choice(np.where(self.ver_colours == 0)[0])
     
-class hmc_player(player):
+class hkn_player(player):
     def __init__(self, name, turns):
         self.turns = turns
         super().__init__(name)
     def play(self):
-        return hs.holticMostConnected(self.matrix, self.ver_colours, self.red_player, self.turns)
+        return hs.heuristic_k_neighbour(self.matrix, self.ver_colours, self.red_player, self.turns)
 
-class hma_player(player):
+class fdm_player(player):
     def __init__(self, name, turns):
         self.turns = turns
         super().__init__(name)
     def play(self):
-        return hs.holticMostAdvantages(self.matrix, self.ver_colours, self.red_player, self.turns)
-
-class hihb_player(player):
-    def __init__(self, name, func):
-        super().__init__(name)
-        self.func = func
-    def play(self):
-        return hs.holsitcIsolatedHighestBurn(self.matrix, self.ver_colours, self.func)[2]
+        return hs.fix_depth_minimax(self.matrix, self.ver_colours, self.red_player, self.turns)
     
-class hhb_player(player):
+class fdm_set_player(player):
+    def play(self):
+        if self.red_player:
+            return hs.fix_depth_minimax(self.matrix, self.ver_colours, self.red_player, 2)
+        else:
+            return hs.fix_depth_minimax(self.matrix, self.ver_colours, self.red_player, 2)
+
+class hib_player(player):
     def __init__(self, name, func):
         super().__init__(name)
         self.func = func
     def play(self):
-        return hs.holsitcHighestBurn(self.matrix, self.ver_colours, self.red_player, self.func)[2]
+        return hs.heuristic_isolated_burn(self.matrix, self.ver_colours, self.func)[2]
+    
+class hsb_player(player):
+    def __init__(self, name, func):
+        super().__init__(name)
+        self.func = func
+    def play(self):
+        return hs.heuristic_simulated_burn(self.matrix, self.ver_colours, self.red_player, self.func)[2]

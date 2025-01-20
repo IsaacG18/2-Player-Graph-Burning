@@ -155,21 +155,21 @@ def update_tree(adj_mat, ver_colours, parent, depth, red):
 
 
 
-def generate_tree_mini_max(adj_mat, depth, ver_colours, red, choice = 0):
+def generate_tree_dfs(adj_mat, depth, ver_colours, red, choice = 0):
     root_node = Node([],choice, ver_colours)
-    update_tree_mini_max(adj_mat, ver_colours, root_node, depth, red)
+    update_tree_dfs(adj_mat, ver_colours, root_node, depth, red)
     return root_node
     
 
 
-def update_tree_mini_max(adj_mat, ver_colours, parent, depth, red):
+def update_tree_dfs(adj_mat, ver_colours, parent, depth, red):
     if depth <= 0:
         return
     if red:
         max_value = float("-inf")
         for i in np.random.permutation(np.where(ver_colours == 0)[0]):
             red_cur, cur_red_node = play_red(ver_colours,i, parent)
-            update_tree_mini_max(adj_mat, red_cur, cur_red_node, depth-1, False)
+            update_tree_dfs(adj_mat, red_cur, cur_red_node, depth-1, False)
             max_value = red_leaf_node_value(cur_red_node, red_cur, max_value)
             parent.value = max_value
             if max_value > 0:
@@ -178,7 +178,7 @@ def update_tree_mini_max(adj_mat, ver_colours, parent, depth, red):
         min_value = float('inf')
         for j in np.random.permutation(np.where(ver_colours == 0)[0]):
             blue_cur, cur_blue_node = play_blue(ver_colours,j, parent, adj_mat)
-            update_tree_mini_max(adj_mat, blue_cur, cur_blue_node, depth-1, True)
+            update_tree_dfs(adj_mat, blue_cur, cur_blue_node, depth-1, True)
             min_value = blue_leaf_node_value(cur_blue_node, blue_cur, min_value)
             parent.value = min_value
             if min_value < 0:

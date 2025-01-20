@@ -5,7 +5,7 @@ import random
 
 GREEN_NUMBER = -1
 
-def holticMostConnected(adj_mat, ver_colours, red_player, turns):
+def heuristic_k_neighbour(adj_mat, ver_colours, red_player, turns):
     best_choice = -1
     if red_player:
         best_value = float('-inf')
@@ -34,10 +34,10 @@ def holticMostConnected(adj_mat, ver_colours, red_player, turns):
     return best_choice
 
 
-def holticMostAdvantages(adj_mat, ver_colours, red_player, turns):
+def fix_depth_minimax(adj_mat, ver_colours, red_player, turns):
     return random.choice(gns.minimax_alpha_beta_return_all_best(gns.generate_tree(adj_mat, turns, ver_colours, red_player), 1 , red_player)[1][1])
 
-def holsitcIsolatedHighestBurn(adj_mat, ver_colours, func):
+def heuristic_isolated_burn(adj_mat, ver_colours, func):
     best = (float("-inf"), float("inf"), -1)
     for i in np.random.permutation(np.where(ver_colours == 0)[0]):
         turns, last, first = 0, 0, True
@@ -54,14 +54,14 @@ def holsitcIsolatedHighestBurn(adj_mat, ver_colours, func):
         best = func(best, (np.sum(current == GREEN_NUMBER), turns, i))
     return best
 
-def betterThanValue(play1, play2):
+def better_than_value(play1, play2):
     if play2[0]>play1[0]:
         return play2
     if play2[0] == play1[0] and play2[1] < play1[1]:
         return play2
     return play1
         
-def holsitcHighestBurn(adj_mat, ver_colours, red_player, func):
+def heuristic_simulated_burn(adj_mat, ver_colours, red_player, func):
     best = (float("-inf"), float("inf"), -1) 
     for i in np.random.permutation(np.where(ver_colours == 0)[0]):
         turns, last, first = 0, 0, True
