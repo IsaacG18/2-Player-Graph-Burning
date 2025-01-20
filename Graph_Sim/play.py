@@ -203,7 +203,9 @@ def write_game(p1, p2, file, folder, matrix):
         writer = csv.writer(file)
         writer.writerow([p1.get_name(), p2.get_name(), value, len(turns), turns,
                         p1_times['setup'], p1_times['update'], p1_times['play'], 
-                        p2_times['setup'], p2_times['update'], p2_times['play'], np.array2string(matrix)])
+                        p1_times['setup'] + p1_times['update'] + p1_times['play'],
+                        p2_times['setup'], p2_times['update'], p2_times['play'], 
+                        p2_times['setup'] + p2_times['update'] + p2_times['play'], np.array2string(matrix)])
 
 
 # test_players_random takes in a list of players, a nummber of vertexs, number generator, a number to split the genertor number, number times to run, and name of csv file
