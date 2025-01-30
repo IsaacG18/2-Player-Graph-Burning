@@ -132,12 +132,19 @@ class fdm_player(player):
     def play(self):
         return hs.fix_depth_minimax(self.matrix, self.ver_colours, self.red_player, self.turns)
     
-class fdm_set_player(player):
+class fdm_set_player_2_3(player):
     def play(self):
         if self.red_player:
             return hs.fix_depth_minimax(self.matrix, self.ver_colours, self.red_player, 2)
         else:
-            return hs.fix_depth_minimax(self.matrix, self.ver_colours, self.red_player, 2)
+            return hs.fix_depth_minimax(self.matrix, self.ver_colours, self.red_player, 3)
+        
+class fdm_set_player_4_3(player):
+    def play(self):
+        if self.red_player:
+            return hs.fix_depth_minimax(self.matrix, self.ver_colours, self.red_player, 4)
+        else:
+            return hs.fix_depth_minimax(self.matrix, self.ver_colours, self.red_player, 3)
 
 class hib_player(player):
     def __init__(self, name, func):
