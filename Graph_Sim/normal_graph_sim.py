@@ -132,7 +132,7 @@ def generate_matrix(x, num_gen=2, split_num=1):
     upper_triangle = np.triu(upper_triangle, 1) 
     adj_mat = upper_triangle + upper_triangle.T + generate_connected_graph(x)
     adj_mat[adj_mat==2]=1
-    return adj_mat
+    return generate_connected_graph_v2(adj_mat)
 
 # generate_matrix_v2 takes in an size of the matrix, a max of a random number and a number to split above and below
 # Create an empty matrix, populate it with random numbers then set all points above split to 1 the rest as 0

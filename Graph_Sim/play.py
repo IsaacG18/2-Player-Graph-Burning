@@ -6,6 +6,12 @@ import os
 import csv
 import copy
 
+HEADER = [
+        "Player1", "Player2", "Value", "Turn Count", "Turns", 
+        "P1SetupTime", "P1UpdateTime", "P1PlayTime", 
+        "P2SetupTime", "P2UpdateTime", "P2PlayTime", 
+        "Matrix"
+    ]
 
 
 # Play a game against the Navie optimial strategy
@@ -197,22 +203,32 @@ def run_human(player, matrix, ver_colours, play_first):
 # write_game takes in 2 players, a csv file, and a game matrix
 # write_game plays a game wtih the 2 players calling run timer then writes players names, times, games matrix and score to csv file
 def write_game(p1, p2, file, folder, matrix):
-    value, p1_times, p2_times, turns = run_timer(p1, p2, matrix, np.zeros(matrix.shape[0]), False)
+    
+    
     file_path = os.path.join(folder, file)
+    
+    write_header = not os.path.exists(file_path) or os.path.getsize(file_path) == 0
+    
+    value, p1_times, p2_times, turns = run_timer(p1, p2, matrix, np.zeros(matrix.shape[0]), False)
     with open(file_path, mode='a', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow([p1.get_name(), p2.get_name(), value, len(turns), turns,
-                        p1_times['setup'], p1_times['update'], p1_times['play'], 
-                        p1_times['setup'] + p1_times['update'] + p1_times['play'],
-                        p2_times['setup'], p2_times['update'], p2_times['play'], 
-                        p2_times['setup'] + p2_times['update'] + p2_times['play'], np.array2string(matrix)])
+        
+        if write_header:
+            writer.writerow(HEADER)
+        
+        writer.writerow([
+            p1.get_name(), p2.get_name(), value, len(turns), turns,
+            p1_times['setup'], p1_times['update'], p1_times['play'],
+            p2_times['setup'], p2_times['update'], p2_times['play'], 
+            np.array2string(matrix)
+        ])
 
 
 # test_players_random takes in a list of players, a nummber of vertexs, number generator, a number to split the genertor number, number times to run, and name of csv file
 # test_players_random generates a matrix of a game which, every player plays against every other player on the matrix and writes it to csv file, it does this iterative times
 def test_players_random(list_players, vertex_count, num_gen, split_num, iterations,file,folder):
     for _ in range(iterations):
-        matrix = ngs.generate_matrix_v2(vertex_count, num_gen, split_num)
+        matrix = ngs.generate_matrix(vertex_count, num_gen, split_num)
         for i in range(len(list_players)):
             for j in range(i, len(list_players)):
                 if i != j:
@@ -225,7 +241,7 @@ def test_players_random(list_players, vertex_count, num_gen, split_num, iteratio
 # test_players_list_random generates a matrix of a game which, every match up on the matrix and writes it to csv file, it does this iterative times
 def test_players_list_random(list_players_vs, vertex_count, num_gen, split_num, iterations, file, folder):
     for _ in range(iterations):
-        matrix = ngs.generate_matrix_v2(vertex_count, num_gen, split_num)
+        matrix = ngs.generate_matrix(vertex_count, num_gen, split_num)
         for p1, p2 in list_players_vs:
             if p1 != p2:
                 write_game(p1,p2,file,folder,matrix)
