@@ -196,14 +196,3 @@ def get_csv_files(folder_path, substring_filter=None):
     except Exception as e:
         print(f"An error occurred: {e}")
         return []
-
-# data = combine_csv(["Heurisitic_30_95.csv","Heurisitic_30_100.csv"],["data_heuristic","data_heuristic"])
-# data = combine_csv(["Heurisitic_30_95.csv","Heurisitic_30_100.csv"],"data_heuristic")
-
-
-
-
-# display_multiple_distributions([get_column_values(dict_1, "Value"), get_column_values(dict_2, "Value")], "Value", ["FDM_SET", "FDM2"])
-
-
-
