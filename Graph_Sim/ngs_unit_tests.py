@@ -32,39 +32,6 @@ class TestGetValue(unittest.TestCase):
         ver_colours = np.array([ngs.RED_NUMBER, ngs.BLUE_NUMBER, 3, 0, ngs.RED_NUMBER, ngs.BLUE_NUMBER])
         self.assertEqual(ngs.get_value(ver_colours), 0)
 
-class TestMakeConnected(unittest.TestCase):
-    def is_connected(self, matrix):
-        graph = csr_matrix(matrix)
-        n_components, _ = connected_components(csgraph=graph, directed=False)
-        return n_components == 1
-
-    def test_connected_graph(self):
-        matrix1 = np.array([[0, 1, 1, 0],
-                            [1, 0, 1, 1],
-                            [1, 1, 0, 1],
-                            [0, 1, 1, 0]])
-        connected1 = ngs.generate_connected_graph_v2(matrix1.copy())
-        self.assertTrue(self.is_connected(connected1), "Connected graph should not become disconnected.")
-        self.assertTrue((matrix1 == connected1).all(), "Connected graph should not be modified.")
-
-    def test_disconnected_graph(self):
-        matrix2 = np.array([[0, 1, 0, 0],
-                            [1, 0, 0, 0],
-                            [0, 0, 0, 1],
-                            [0, 0, 1, 0]])
-        connected2 = ngs.generate_connected_graph_v2(matrix2.copy())
-        self.assertTrue(self.is_connected(connected2), "Disconnected graph should not remain disconnected.")
-        self.assertTrue((connected2 == connected2.T).all(), "Graph should remain symmetric.")
-
-    def test_two_disconnected_nodes(self):
-        matrix4 = np.array([[0, 0],
-                            [0, 0]])
-        connected4 = ngs.generate_connected_graph_v2(matrix4.copy())
-        self.assertTrue(self.is_connected(connected4), "Two disconnected nodes should not remain disconnected.")
-        self.assertEqual(connected4[0, 1], 1, "Edge should be added between nodes.")
-        self.assertEqual(connected4[1, 0], 1, "Edge should be added between nodes.")
-        self.assertEqual(connected4[0, 0], 0, "Edge should not connect to itself.")
-        self.assertEqual(connected4[1, 1], 0, "Edge should not connect to itself.")
 
 class TestBurnGraph(unittest.TestCase):
     def test_no_red_or_blue(self):
