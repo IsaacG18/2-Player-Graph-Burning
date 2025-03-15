@@ -37,7 +37,7 @@ def stats(data):
         
 
 
-def plot_scatter(data, xLabel, yLabel, title=None):
+def plot_scatter(data, xLabel, yLabel, title=None, save_path=None):
     plt.figure(figsize=(10, 5))
     grouped_data = defaultdict(lambda: ([], []))
     for p1_name, X, Y in data:
@@ -54,7 +54,12 @@ def plot_scatter(data, xLabel, yLabel, title=None):
     plt.ylabel(yLabel)
     plt.legend()
     plt.grid(True)
-    plt.show()
+    plt.legend(title="Distributions")
+    if save_path:
+        plt.savefig(save_path, dpi=300, bbox_inches="tight")  
+    else:
+        plt.show()
+
 
 
 def get_filtered_rows(data, filters):
@@ -85,7 +90,7 @@ def get_filtered_rows(data, filters):
     return filtered_data.to_dict(orient="records")
 
 def get_column_values(data_dict, column, player1_total=False, player2_total=False):
-    if type(column) == list:
+    if type(column) == list and len(column)+player1_total+player2_total>1:
         extracted_data = []
         for row in data_dict:
             extracted_row = [row[key] for key in column]
@@ -94,6 +99,16 @@ def get_column_values(data_dict, column, player1_total=False, player2_total=Fals
             if player2_total:
                 extracted_row.append(row["P2SetupTime"] + row["P2UpdateTime"] + row["P2PlayTime"])
             extracted_data.append(extracted_row)
+        return extracted_data
+    elif type(column) == list:
+        extracted_data = []
+        for row in data_dict:
+            if player1_total:
+                extracted_data.append(row["P1SetupTime"] + row["P1UpdateTime"] + row["P1PlayTime"])
+            elif player2_total:
+                extracted_data.append(row["P2SetupTime"] + row["P2UpdateTime"] + row["P2PlayTime"])
+            else:
+                extracted_data.append(row[column[0]])
         return extracted_data
     else:
         return [row[column] for row in data_dict if column in row]
@@ -123,7 +138,7 @@ def get_total_times(data_dict):
     return player1_total,player2_total
     
 
-def display_multiple_distributions(data_lists, xlabel, names_lists=None, bins=10, plot_type="hist", title=None):
+def display_multiple_distributions(data_lists, ylabel, names_lists=None, bins=10, plot_type="hist", title=None, save_path=None):
     plt.figure(figsize=(10, 6))
     if names_lists is None: names_lists = [f"Distribution {i+1}" for i in range(len(data_lists))]
     if plot_type == "bar_beside":
@@ -137,27 +152,33 @@ def display_multiple_distributions(data_lists, xlabel, names_lists=None, bins=10
                 if names_lists[i] not in labels:
                     handles.append(bars[0])
                     labels.append(names_lists[i])
+    elif plot_type == "violin":
+        sns.violinplot(data=data_lists, inner="quartile")
+        plt.xticks(range(len(names_lists)), names_lists)
     else:
-        for i, values in enumerate(data_lists):
+        for values, name in zip(data_lists, names_lists):
             if plot_type == "hist":
-                sns.histplot(values, bins=bins, kde=False, label=names_lists[i], alpha=0.3)
+                sns.histplot(values, bins=bins, kde=False, label=name, alpha=0.3)
             elif plot_type == "density":
-                sns.kdeplot(values, label=names_lists[i], fill=True, alpha=0.3)
+                sns.kdeplot(values, label=name, fill=True, alpha=0.3)
             elif plot_type == "bar":
                 unique_values, counts = np.unique(values, return_counts=True)
-                plt.bar(unique_values, counts, alpha=0.3, label=names_lists[i])
+                plt.bar(unique_values, counts, alpha=0.3, label=name)
             else:
                 raise ValueError("Unsupported plot_type. Use 'hist' or 'density'.")
     
     if title:
         plt.title(title)
-    else:
-        plt.title("Multiple Distributions")
+
     
-    plt.xlabel(xlabel)
-    plt.ylabel("Frequency / Density")
-    plt.legend(title="Distributions")
-    plt.show()
+    plt.xlabel("Players")
+    plt.ylabel(ylabel)
+
+    # plt.legend(title="Distributions")
+    if save_path:
+        plt.savefig(save_path, dpi=300, bbox_inches="tight")  
+    else:
+        plt.show()
 
 def get_csv_files(folder_path, substring_filter=None):
     try:
