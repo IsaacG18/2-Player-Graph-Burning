@@ -63,7 +63,7 @@ GP_F_PLAYERS = [gns_dfs , gp_dfs_sim, f_dfs_sim, gp_dfs_iso, f_dfs_iso, gp_dfs_n
 
 PLAYERS = FINAL_PLAYERS
 FILENAME = "all"
-FOLDER = "balls"
+FOLDER = "all_data_2"
 SIZE = [10,15]
 ITER = 50
 
