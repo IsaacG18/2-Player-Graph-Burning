@@ -8,15 +8,12 @@ class Node:
         self.children = children if children is not None else []
         self.ver_colour = ver_colour
 
-
     def get_child(self, choice):
         for child in self.children:
             if child.choice == choice:
                 return child
         return None
-    
-
-    
+     
     
 def minimax_alpha_beta_return_all_best(node, depth, maximizing_player, alpha=float('-inf'), beta= float('inf')):
     if not node.children or depth == 0:
@@ -183,11 +180,6 @@ def update_tree_dfs(adj_mat, ver_colours, parent, depth, red):
             parent.value = min_value
             if min_value < 0:
                 return
-        
-
-
-
-
 
 
 def print_tree(node, level=0):

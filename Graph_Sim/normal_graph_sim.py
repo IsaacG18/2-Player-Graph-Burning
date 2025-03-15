@@ -2,8 +2,6 @@ import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 import random
-from scipy.sparse.csgraph import connected_components
-from scipy.sparse import csr_matrix
 
 COLOUR_MAP = {0: 'green', 1: 'red', 2: 'blue', 3: 'purple'}
 RED_NUMBER = 1
@@ -98,27 +96,6 @@ def generate_connected_graph(x):
         con_mat[connection, i], con_mat[i, connection] = 1, 1
         connect.append(i)
     return con_mat
-# generate_connected_graph takes a matrix
-# Uses Spicy to check what vertex are disconnected and connected them
-# returns connect adject matrix
-def generate_connected_graph_v2(matrix):
-    graph = csr_matrix(matrix)
-    n_components, labels = connected_components(csgraph=graph, directed=False)
-
-    if n_components == 1:
-        return matrix
-    
-    components = {i: [] for i in range(n_components)}
-    for node, label in enumerate(labels):
-        components[label].append(node)
-
-    for i in range(n_components - 1):
-        node1 = components[i][0]
-        node2 = components[i + 1][0]
-        matrix[node1][node2] = 1
-        matrix[node2][node1] = 1 
-
-    return matrix
 
 
 # generate_matrix takes in an size of the matrix, a max of a random number and a number to split above and below
@@ -132,21 +109,7 @@ def generate_matrix(x, num_gen=2, split_num=1):
     upper_triangle = np.triu(upper_triangle, 1) 
     adj_mat = upper_triangle + upper_triangle.T + generate_connected_graph(x)
     adj_mat[adj_mat==2]=1
-    return generate_connected_graph_v2(adj_mat)
-
-# generate_matrix_v2 takes in an size of the matrix, a max of a random number and a number to split above and below
-# Create an empty matrix, populate it with random numbers then set all points above split to 1 the rest as 0
-# Then make the matrix sysmetric then call generate_connected_graph_v2 to make the matrix connected
-# returns an adjancy matrix
-def generate_matrix_v2(x, num_gen=2, split_num=1):
-    upper_triangle = np.random.randint(0, num_gen, size=(x, x))
-    upper_triangle[np.where(upper_triangle< split_num )] = 0
-    upper_triangle[np.where(upper_triangle >= split_num )] = 1
-    upper_triangle = np.triu(upper_triangle, 1) 
-    adj_mat = upper_triangle + upper_triangle.T
-    adj_mat[adj_mat==2]=1
-    np.fill_diagonal(adj_mat, 0)
-    return generate_connected_graph_v2(adj_mat)
+    return adj_mat
 
 # find_winner takes in an adjancy matrix, and a set of red points and blue points
 # It calls run simulator then finds the winning plater
@@ -159,3 +122,4 @@ def find_winner(adj_mat, red_points, blue_points):
         return 2
     else:
         return 0
+
