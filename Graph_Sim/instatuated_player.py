@@ -52,7 +52,7 @@ class gns_dfs_player(gns_player):
     def update(self, play):
         if self.node.get_child(play) is None:
             self.node = gns.generate_tree_dfs(self.matrix, self.depth, self.ver_colours, self.red_player, play)
-            return 
+            return
         self.node = self.node.get_child(play)
 
 class gns_hashmap_player(gns_player):
@@ -75,25 +75,24 @@ class gp_dfs_player(gns_player):
         self.func_sort = func_sort
     def setup(self, matrix, ver_colours, red_player):
         player.setup(self, matrix, ver_colours, red_player)
-        self.node = hgs.guided_priority_dfs(self.matrix, self.depth, self.ver_colours, self.red_player, self.red_player, self.func_list,  self.func_sort)
+        self.node = hgs.guided_priority_dfs(self.matrix, self.depth, self.ver_colours, self.red_player, self.func_list,  self.func_sort)
     def update(self, play):
         if self.node.get_child(play) is None:
-             self.node = hgs.guided_priority_dfs(self.matrix, self.depth, self.ver_colours, self.red_player, self.red_player, self.func_list,  self.func_sort, play)
+             self.node = hgs.guided_priority_dfs(self.matrix, self.depth, self.ver_colours, self.red_player, self.func_list,  self.func_sort, play)
              return
         self.node = self.node.get_child(play) 
 
 class f_dfs_player(gns_player): 
-    def __init__(self, name, depth, func_list, func_cmp, count_min):
+    def __init__(self, name, depth, func_list, func_cmp):
         super().__init__(name, depth)
         self.func_list = func_list
         self.func_cmp = func_cmp
-        self.count_min = count_min
     def setup(self, matrix, ver_colours, red_player):
         player.setup(self, matrix, ver_colours, red_player)
-        self.node = hgs.filter_dfs(self.matrix, self.depth, self.ver_colours, self.red_player, self.red_player, self.func_list,  self.func_cmp, self.count_min)
+        self.node = hgs.filter_dfs(self.matrix, self.depth, self.ver_colours, self.red_player, self.func_list,  self.func_cmp)
     def update(self, play):
         if self.node.get_child(play) is None:
-             self.node = hgs.filter_dfs(self.matrix, self.depth, self.ver_colours, self.red_player, self.red_player, self.func_list, self.func_cmp, self.count_min, play)
+             self.node = hgs.filter_dfs(self.matrix, self.depth, self.ver_colours, self.red_player, self.func_list, self.func_cmp, play)
              return
         self.node = self.node.get_child(play) 
 
@@ -159,3 +158,10 @@ class hsb_player(player):
         self.func = func
     def play(self):
         return hs.heuristic_simulated_burn(self.matrix, self.ver_colours, self.red_player, self.func)[2]
+
+
+class hnh_player(player):
+    def __init__(self, name):
+        super().__init__(name)
+    def play(self):
+        return hs.neighbourhood_heuristic(self.matrix, self.ver_colours)

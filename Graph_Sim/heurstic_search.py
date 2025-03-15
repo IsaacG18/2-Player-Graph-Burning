@@ -82,3 +82,11 @@ def heuristic_simulated_burn(adj_mat, ver_colours, red_player, func):
             best = func(best, (-ngs.get_value(current), turns, i))
     return best
 
+def neighbourhood_heuristic(adj_mat, ver_colours):
+    row_sums = np.sum(adj_mat, axis=1)
+    zero_colour_indices = np.where(ver_colours == 0)[0]
+    if len(zero_colour_indices) == 0:
+        return None
+    max_index = zero_colour_indices[np.argmax(row_sums[zero_colour_indices])]
+    
+    return max_index
