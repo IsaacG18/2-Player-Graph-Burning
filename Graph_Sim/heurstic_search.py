@@ -83,27 +83,6 @@ def heuristic_simulated_burn(adj_mat, ver_colours, red_player, func):
     return best
 
 
-def heuristic_simulated_burn(adj_mat, ver_colours, red_player, func):
-    best = (float("-inf"), float("inf"), -1) 
-    for i in np.random.permutation(np.where(ver_colours == 0)[0]):
-        turns, last, first = 0, 0, True
-        current = np.copy(ver_colours)
-        if red_player:
-            current[i] += ngs.RED_NUMBER
-        else:
-            current[i] += ngs.BLUE_NUMBER
-        while last - np.sum(current)!= 0 or first:
-            turns += 1
-            if first == True:
-                first = False
-            last = np.sum(current)
-            ngs.burn_graph(adj_mat, current)
-        if red_player:
-            best = func(best, (ngs.get_value(current), turns, i))
-        else:
-            best = func(best, (-ngs.get_value(current), turns, i))
-    return best
-
 def neighbourhood_heuristic(adj_mat, ver_colours):
     best = (float("-inf"), -1) 
     row_sums = np.sum(adj_mat, axis=1)

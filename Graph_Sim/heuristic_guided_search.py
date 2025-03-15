@@ -145,7 +145,6 @@ def update_tree_priority(adj_mat, ver_colours, parent, depth, red_player, func_l
                 return
 
 
-
 def filter_dfs(adj_mat, depth, ver_colours, red_player, func_list, func_sort, choice = 0):
     root_node = gns.Node([],choice, ver_colours)
     update_tree_filter(adj_mat, ver_colours, root_node, depth, red_player, func_list, func_sort)

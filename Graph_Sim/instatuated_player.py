@@ -160,7 +160,6 @@ class hsb_player(player):
         return hs.heuristic_simulated_burn(self.matrix, self.ver_colours, self.red_player, self.func)[2]
 
 
-
 class hnh_player(player):
     def __init__(self, name):
         super().__init__(name)
