@@ -56,7 +56,7 @@ def play_game_optermised(matrix, ver_colours):
 # Run takes in 2 different players, a game matrix, vertex colour array for the game and bool on to displaying
 # Run players a game with 2 stragies
 # Returns the final vertex colour array 
-def run(p1, p2, matrix, ver_colours, display):
+def run(p1, p2, matrix, ver_colours, display=False):
     play = 0
     if np.any(ver_colours == 0):
         p1.setup(matrix, ver_colours, True)
@@ -162,10 +162,14 @@ def run_human(player, matrix, ver_colours, play_first):
         while input_value != -1 or np.any(ver_colours == 0):
             if play_first:
                 ngs.create_graph(matrix, ver_colours)
+                if np.all(ver_colours != 0):
+                    print("Game over")
+                    return
                 input_value = int(input("Enter choice or quit by entering -1: "))
                 if input_value < 0  or input_value >= ver_colours.shape[0] or ver_colours[input_value] != 0:
                     if input_value == -1:
                         print("Quitting...")
+                        return
                     else:
                         print("Not a value input")
                     continue
@@ -182,20 +186,26 @@ def run_human(player, matrix, ver_colours, play_first):
                 if first_turn:
                     player.setup(matrix, ver_colours, True)
                     first_turn=False
-                ver_colours[player.play()] += ngs.RED_NUMBER
                 if np.any(ver_colours == 0):
-                    ngs.create_graph(matrix, ver_colours)
+                    ver_colours[player.play()] += ngs.RED_NUMBER
+                ngs.create_graph(matrix, ver_colours)
+                if np.any(ver_colours == 0):
+                    if np.all(ver_colours != 0):
+                        print("Game over")
+                        return
                     input_value = int(input("Enter choice or quit by entering -1: "))
                     while input_value < 0  or input_value >= ver_colours.shape[0] or ver_colours[input_value] != 0:
                         if input_value == -1:
                             print("Quitting...")
-                            continue
+                            return
                         else:
                             print("Not a value input")
                             input_value = int(input("Enter choice or quit by entering -1: "))
                     ver_colours[input_value] += ngs.BLUE_NUMBER
                     ngs.burn_graph(matrix, ver_colours)
                     player.update(input_value)
+                else:
+                    return
     except ValueError:
         print("Not a value input")
 
@@ -269,4 +279,3 @@ def test_players_list_set(list_players_vs, list_matrix, file, folder):
                 write_game(p1,p2,file,folder,matrix)
             else:
                 write_game(p1,copy.deepcopy(p1),file,folder,matrix)
-                
