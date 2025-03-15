@@ -50,3 +50,5 @@ env/
 # Editor and OS-specific files
 .DS_Store
 Thumbs.db
+
+Graph_Sim/**/*.png

@@ -3,9 +3,7 @@ import instatuated_player as ip
 import heuristic_guided_search as hgs
 import play as p
 import math
-import normal_graph_sim as ngs
-import numpy as np
-import copy
+import os
 
 NUMBER_GEN = 100
 
@@ -14,15 +12,15 @@ gns = ip.gns_player("GNS", float("inf"))
 gns_dfs  = ip.gns_dfs_player("GNSDF", float("inf"))
 gns_hash = ip.gns_hashmap_player("Hashmap", float("inf"))
 gp_dfs_sim = ip.gp_dfs_player("GPDFS_Sim", float("inf"), hgs.heuristic_simulated_burn_list, hs.better_than_value)
-f_dfs_sim = ip.f_dfs_player("FDFS_Sim",float("inf"), hgs.heuristic_simulated_burn_list, hs.better_than_value, 2)
+f_dfs_sim = ip.f_dfs_player("FDFS_Sim",float("inf"), hgs.heuristic_simulated_burn_list, hs.better_than_value)
 gp_dfs_iso = ip.gp_dfs_player("GPDFS_Iso", float("inf"), hgs.heuristic_isolated_burn_list, hs.better_than_value)
-f_dfs_iso = ip.f_dfs_player("FDFS_Iso",float("inf"), hgs.heuristic_isolated_burn_list, hs.better_than_value, 2)
+f_dfs_iso = ip.f_dfs_player("FDFS_Iso",float("inf"), hgs.heuristic_isolated_burn_list, hs.better_than_value)
 gp_dfs_nl = ip.gp_dfs_player("GPDFS_NL", float("inf"), hgs.neighbourhood_list, hs.better_than_value)
-f_dfs_nl = ip.f_dfs_player("FDFS_NL",float("inf"), hgs.neighbourhood_list, hs.better_than_value, 2)
+f_dfs_nl = ip.f_dfs_player("FDFS_NL",float("inf"), hgs.neighbourhood_list, hs.better_than_value)
 gp_dfs_nbl = ip.gp_dfs_player("GPDFS_NBL", float("inf"), hgs.neighbourhood_burn_list, hs.better_than_value)
-f_dfs_nbl = ip.f_dfs_player("FDFS_NBL",float("inf"), hgs.neighbourhood_burn_list, hs.better_than_value, 2)
+f_dfs_nbl = ip.f_dfs_player("FDFS_NBL",float("inf"), hgs.neighbourhood_burn_list, hs.better_than_value)
 gp_dfs_bpl = ip.gp_dfs_player("GPDFS_BPL", float("inf"), hgs.best_play_list, hs.better_than_value)
-f_dfs_bpl = ip.f_dfs_player("FDFS_BPL",float("inf"), hgs.best_play_list, hs.better_than_value, 2)
+f_dfs_bpl = ip.f_dfs_player("FDFS_BPL",float("inf"), hgs.best_play_list, hs.better_than_value)
 mc = ip.mc_player("MC",100, math.sqrt(2))
 random = ip.random_player("Random")
 fdm_1 = ip.fdm_player("FDM1", 1)
@@ -45,7 +43,8 @@ hib = ip.hib_player("HIB", hs.better_than_value)
 hsb = ip.hsb_player("HBB", hs.better_than_value)
 hnh = ip.hnh_player("HNH")
 
-ALL_PLAYERS = [gns, gns_dfs , gns_hash, gp_dfs_sim, f_dfs_sim,gp_dfs_iso, f_dfs_iso, 
+ALL_PLAYERS = [gns, gns_dfs , gns_hash, 
+                gp_dfs_sim, f_dfs_sim, gp_dfs_iso, f_dfs_iso, gp_dfs_nl, f_dfs_nl, gp_dfs_nbl, f_dfs_nbl, gp_dfs_bpl, f_dfs_bpl,
                 mc, random, fdm_1, fdm_2, fdm_3, fdm_4, fdm_set_2_3, fdm_set_4_3, hib, hsb, hnh,
                 hkn_1, hkn_2, hkn_3, hkn_4, hkn_5, hkn_6, hkn_7, hkn_8, hkn_9, hkn_10]
 
@@ -55,6 +54,18 @@ FINAL_PLAYERS = [gns, gns_dfs , gns_hash,
                  fdm_set_4_3, fdm_set_2_3, 
                  mc, random, hib, hsb, hnh,
                  hkn_1, hkn_2, hkn_3,]
+
+FDM_PLAYERS = [gns_dfs, fdm_1, fdm_2, fdm_3, fdm_4, fdm_set_2_3, fdm_set_4_3]
+
+HKN_PLAYERS = [gns_dfs, hkn_1, hkn_2, hkn_3, hkn_4, hkn_5, hkn_6, hkn_7, hkn_8, hkn_9, hkn_10]
+
+GP_F_PLAYERS = [gns_dfs , gp_dfs_sim, f_dfs_sim, gp_dfs_iso, f_dfs_iso, gp_dfs_nl, f_dfs_nl, gp_dfs_nbl, f_dfs_nbl, gp_dfs_bpl, f_dfs_bpl]
+
+PLAYERS = FINAL_PLAYERS
+FILENAME = "all"
+FOLDER = "balls"
+SIZE = [10,15]
+ITER = 50
 
 def test_players(list_players, vertex_count, iterations, file, folder):
     p.test_players_random(list_players, vertex_count, NUMBER_GEN, 100, iterations, file+"_100.csv", folder)
@@ -68,7 +79,10 @@ def test_players(list_players, vertex_count, iterations, file, folder):
     
 
 def test_all_players(players, filename, foldername, sizes, iter):
+    print("Start Running comparison...")
+    os.makedirs(foldername, exist_ok=True)
     for i in sizes:
         test_players(players, i, iter, f"{filename}_{i}", foldername)
   
 
+test_all_players(PLAYERS, FILENAME, FOLDER, SIZE, ITER)
