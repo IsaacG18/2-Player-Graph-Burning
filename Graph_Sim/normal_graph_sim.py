@@ -3,10 +3,11 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import random
 
-COLOUR_MAP = {0: 'green', 1: 'red', 2: 'blue', 3: 'purple'}
 RED_NUMBER = 1
 BLUE_NUMBER = 2
 PURPLE_NUMBER = 3
+
+COLOUR_MAP = {0: 'green', RED_NUMBER: 'red', BLUE_NUMBER: 'blue', PURPLE_NUMBER: 'purple'}
 
 # colour_point takes in a vertor of points, current index, list of points, and colour
 # If the index is over the amount of points it returns the current count
@@ -90,11 +91,9 @@ def sim_graph(adj_mat, red_points, blue_points, display_amount=-1):
 # returns connect xbyx adjancy matrix with x-1 edges
 def generate_connected_graph(x):
     con_mat = np.zeros((x,x))
-    connect = [x-1]
     for i in range(x-2,-1,-1):
         connection = random.randint(i+1, x-1)
         con_mat[connection, i], con_mat[i, connection] = 1, 1
-        connect.append(i)
     return con_mat
 
 

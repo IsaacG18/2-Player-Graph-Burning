@@ -44,8 +44,8 @@ def minimax_alpha_beta_hash(node, maximizing_player, curr_ver):
                 min_eval =  child.value
         return min_choice
     
-def generate_tree_hashmap(adj_mat, depth, ver_colours, red, map = {}):
-    root_node = Node({tuple(ver_colours):-1},0, ver_colours)
+def generate_tree_hashmap(adj_mat, depth, ver_colours, red, map = {}, choice = 0):
+    root_node = Node({tuple(ver_colours):-1},choice, ver_colours)
     update_tree_hashmap(adj_mat, ver_colours, root_node, depth, red, map)
     return root_node
     
