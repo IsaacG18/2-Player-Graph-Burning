@@ -145,8 +145,6 @@ def update_tree(adj_mat, ver_colours, parent, depth, red):
         for j in np.random.permutation(np.where(ver_colours == 0)[0]):
             blue_cur, cur_blue_node = play_blue(ver_colours,j, parent, adj_mat)
             update_tree(adj_mat, blue_cur, cur_blue_node, depth-1, True)
-            if cur_blue_node.children == []:
-                cur_blue_node.value = ngs.get_value(blue_cur)
             min_value = blue_leaf_node_value(cur_blue_node, blue_cur, min_value)
             parent.value = min_value
 
