@@ -84,9 +84,18 @@ def heuristic_simulated_burn(adj_mat, ver_colours, red_player, func):
 
 def neighbourhood_heuristic(adj_mat, ver_colours):
     row_sums = np.sum(adj_mat, axis=1)
-    zero_colour_indices = np.where(ver_colours == 0)[0]
-    if len(zero_colour_indices) == 0:
-        return None
-    max_index = zero_colour_indices[np.argmax(row_sums[zero_colour_indices])]
-    
+    max_index, max_value = -1, -1
+    for i in np.random.permutation(np.where(ver_colours == 0)[0]):
+        if max_value < row_sums[i]:
+            max_index, max_value = i, row_sums[i]
     return max_index
+
+def neighbourhood_heuristic_constant(adj_mat):
+    row_sums = np.sum(adj_mat, axis=1)
+    def func(ver_colours):
+        max_index, max_value = -1, -1
+        for i in np.random.permutation(np.where(ver_colours == 0)[0]):
+            if max_value < row_sums[i]:
+                max_index, max_value = i, row_sums[i]
+        return max_index
+    return func  

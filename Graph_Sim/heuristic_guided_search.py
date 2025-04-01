@@ -7,6 +7,16 @@ import random
 GREEN_NUMBER = -1
 
 
+def neighbourhood_burn_list_constant(adj_mat):
+    return_list = []
+    row_sums = np.sum(adj_mat, axis=1)
+    def func(ver_colours):
+        for i in np.random.permutation(np.where(ver_colours == 0)[0]):
+            return_list.append((row_sums[i], 1, i))
+        return return_list 
+    return func  
+
+
 def neighbourhood_burn_list(adj_mat, ver_colours, red_player):
     return_list = []
     for i in np.random.permutation(np.where(ver_colours == 0)[0]):
@@ -34,24 +44,26 @@ def best_play_list(adj_mat, ver_colours, red_player):
     return_list = []
     for i in np.random.permutation(np.where(ver_colours == 0)[0]):
         turns = 1
-        value = 0
+        value = float("-inf")
         current = np.copy(ver_colours)
         if red_player:
             current[i] += ngs.RED_NUMBER
+            blue_value = float("inf")
             for j in np.random.permutation(np.where(current == 0)[0]):
                 blue_play = np.copy(current)
                 blue_play[j] += ngs.BLUE_NUMBER
                 ngs.burn_graph(adj_mat, blue_play)
-                value = min(value, ngs.get_value(blue_play))
+                blue_value = min(blue_value, ngs.get_value(blue_play))
+            if blue_value == float("inf"):
+                blue_value = ngs.get_value(current)
+            value = max(value, blue_value)
 
         else:
             current[i] += ngs.BLUE_NUMBER
             ngs.burn_graph(adj_mat, current)
             value = ngs.get_value(current)
-        
-        ngs.burn_graph(adj_mat, current)
         if red_player:
-            return_list.append((ngs.get_value(current), turns, i))
+            return_list.append((value, turns, i))
         else:
             return_list.append((-value, turns, i))
     return return_list 
@@ -127,10 +139,8 @@ def update_tree_priority(adj_mat, ver_colours, parent, depth, red_player, func_l
         for _,_,i in children:
             red_cur, cur_red_node = gns.play_red(ver_colours,i, parent)
             update_tree_priority(adj_mat, red_cur, cur_red_node, depth-1, False, func_list, func_sort)
-            if cur_red_node.children == []:
-                cur_red_node.value = ngs.get_value(red_cur)
-            parent.value = max(max_value, cur_red_node.value)
-            max_value = max(max_value, cur_red_node.value)
+            max_value = gns.red_leaf_node_value(cur_red_node, red_cur, max_value)
+            parent.value = max_value
             if max_value > 0:
                 return
     else:
@@ -162,10 +172,8 @@ def update_tree_filter(adj_mat, ver_colours, parent, depth, red_player, func_lis
             
             red_cur, cur_red_node = gns.play_red(ver_colours,i, parent)
             update_tree_filter(adj_mat, red_cur, cur_red_node, depth-1, False, func_list, func_sort)
-            if cur_red_node.children == []:
-                cur_red_node.value = ngs.get_value(red_cur)
-            parent.value = max(max_value, cur_red_node.value)
-            max_value = max(max_value, cur_red_node.value)
+            max_value = gns.red_leaf_node_value(cur_red_node, red_cur, max_value)
+            parent.value = max_value
             if max_value > 0:
                 return
             count += 1
