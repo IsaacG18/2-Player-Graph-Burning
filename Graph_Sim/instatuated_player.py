@@ -62,7 +62,11 @@ class gns_hashmap_player(gns_player):
         player.setup(self, matrix, ver_colours, red_player)
         self.node = hg.generate_tree_hashmap(matrix, self.depth, ver_colours, red_player, {})
     def update(self, play):
-        self.node = self.node.get_child_by_ver( self.ver_colours)
+        self.node = self.node.get_child_by_ver(self.ver_colours)
+        if self.node.get_child_by_ver(self.ver_colours) is None:
+            self.node = hg.generate_tree_hashmap(self.matrix, self.depth, self.ver_colours, self.red_player, {}, play)
+            return
+        self.node = self.node.get_child_by_ver(self.ver_colours)
     def play(self):
         result = hg.minimax_alpha_beta_hash(self.node, self.red_player, tuple(self.ver_colours))
         self.node = self.node.get_child(result)
@@ -144,6 +148,20 @@ class fdm_set_player_4_3(player):
             return hs.fix_depth_minimax(self.matrix, self.ver_colours, self.red_player, 4)
         else:
             return hs.fix_depth_minimax(self.matrix, self.ver_colours, self.red_player, 3)
+        
+class fdm_set_player_2_1(player):
+    def play(self):
+        if self.red_player:
+            return hs.fix_depth_minimax(self.matrix, self.ver_colours, self.red_player, 2)
+        else:
+            return hs.fix_depth_minimax(self.matrix, self.ver_colours, self.red_player, 1)
+        
+class fdm_set_player_4_1(player):
+    def play(self):
+        if self.red_player:
+            return hs.fix_depth_minimax(self.matrix, self.ver_colours, self.red_player, 4)
+        else:
+            return hs.fix_depth_minimax(self.matrix, self.ver_colours, self.red_player, 1)
 
 class hib_player(player):
     def __init__(self, name, func):
