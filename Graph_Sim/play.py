@@ -5,12 +5,12 @@ import time
 import os
 import csv
 import copy
+import const as c
+
 
 HEADER = [
-        "Player1", "Player2", "Value", "Turn Count", "Turns", 
-        "P1SetupTime", "P1UpdateTime", "P1PlayTime", 
-        "P2SetupTime", "P2UpdateTime", "P2PlayTime", 
-        "Matrix"
+        c.PLAYER1, c.PLAYER2, c.VALUE, c.TURN_COUNT, c.TURNS,
+        c.P1ST, c.P1UT, c.P1PT, c.P2ST, c.P2UT, c.P2PT, c.MATRIX
     ]
 
 
@@ -279,3 +279,12 @@ def test_players_list_set(list_players_vs, list_matrix, file, folder):
                 write_game(p1,p2,file,folder,matrix)
             else:
                 write_game(p1,copy.deepcopy(p1),file,folder,matrix)
+
+
+# THIS IS A EXPERIMENTAL TOOL NONE-PRODUCTION TESTED
+def test_human_against_player_gen(player, vertex_count, num_gen, split_num, first):
+    run_human(player,ngs.generate_matrix(vertex_count, num_gen, split_num), np.zeros(vertex_count), first)
+
+# THIS IS A EXPERIMENTAL TOOL NONE-PRODUCTION TESTED
+def test_human_against_player(player, matrix, first):
+    run_human(player,matrix, np.zeros(matrix.shape[0]), first)
