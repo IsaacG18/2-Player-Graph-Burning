@@ -88,7 +88,7 @@ EXP_SET =   [
                {"PLAYERS":GP_PLAYERS[:-1],       "GV":True,  "FOLDER":"Last_GP_F", "HEAT":False, "EXTRA":"SIM",     "FVERTEX":FV},
                {"PLAYERS":F_PLAYERS,            "GV":True,  "FOLDER":"Last_GP_F", "HEAT":False, "EXTRA":"F",         "FVERTEX":FV},
                {"PLAYERS":MC_PLAYERS,           "GV":False, "FOLDER":"Last_MC"  , "HEAT":False, "EXTRA":"",         "FVERTEX":FV},
-               {"PLAYERS":FINAL_PLAYERS,        "GV":False, "FOLDER":"Last_all" , "HEAT":False,  "EXTRA":"all1015",  "FVERTEX":FV[:-1]},
+               {"PLAYERS":FINAL_PLAYERS,        "GV":False, "FOLDER":"Last_all" , "HEAT":True,  "EXTRA":"all1015",  "FVERTEX":FV[:-1]},
                {"PLAYERS":FINAL_PLAYERS[:-3],   "GV":False, "FOLDER":"Last_all" , "HEAT":True,  "EXTRA":"ex1015",   "FVERTEX":FV[:-1]},
                {"PLAYERS":FINAL_PLAYERS[2:],    "GV":False, "FOLDER":"Last_all" , "HEAT":True,  "EXTRA":"all20",    "FVERTEX":FV[-1:]},
                {"PLAYERS":FINAL_PLAYERS[2:-3],  "GV":False, "FOLDER":"Last_all" , "HEAT":True,  "EXTRA":"ex20",     "FVERTEX":FV[-1:]},
