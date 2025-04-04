@@ -5,7 +5,7 @@ import seaborn as sns
 import pandas as pd
 import statistics
 import const as c
-
+import numpy as np
 # Visualization and data processing constants
 FIGSIZE_X = 10 
 FIGSIZE_Y = 8
@@ -15,26 +15,38 @@ ALPHA=0.7
 ANNOT = True
 CMAP = "YlGnBu"
 ANNOT_SIZE = 10
-MAP_X_LAB = "Opponent"
-MAP_Y_LAB = "Player"
-X_LABEL_DIS = "Player"
+MAP_X_LAB = "Player 2"
+MAP_Y_LAB = "Player 1"
+X_LABEL_DIS = "Strategies"
 Y_LABEL_DIS = "Denisty"
 SET_STYLE = "whitegrid"
 HIST = "hist"
 DEN = "density"
 VIO = "violin"
 BOX="box"
-XTICK_FONTSIZE=20
-XTICK_ROTATION=0
-YTICK_FONTSIZE =20
+XTICK_FONTSIZE=21
+XTICK_ROTATION=90
+YTICK_FONTSIZE =21
 LINEWIDTH = 1.2
 SATURATION=0.75
 INNER = "quartile"
 PALETTE="Set2"
-X_LABEL_FONTSIZE = 22
-Y_LABEL_FONTSIZE = 22
-LEGEND_FONTSIZE = 20
-TITLE_FONTSIZE = 20
+BAR_LEGEND="Graph Size"
+X_LABEL_FONTSIZE = 23
+Y_LABEL_FONTSIZE = 23
+X_LABEL_FONTSIZE_BAR = 20
+LEGEND_FONTSIZE = 21
+TITLE_FONTSIZE = 21
+BAR_WIDTH = 0.25
+BAR_ROTATE=45
+XTICK_FONTSIZE_BAR=19
+Y_LABEL_LOG_BAR = "Mean Total Time Taken (Seconds Scale Log)"
+Y_LABEL_BAR = "Mean Total Time Taken (Seconds)"
+Y_LABEL_FONT_BAR=18
+LOG_SUB_FONTSIZE =4
+FIGSIZE_X_BAR = 14 
+FIGSIZE_Y_BAR = 7
+XTICK_FONTSIZE_HEAT = 13
 
 def data_csv(file_name, folder_path, data=None):
     """
@@ -90,7 +102,8 @@ def stats(data):
         mean = statistics.mean(list)
         median = statistics.median(list)
         std_dev = statistics.stdev(list)
-        return_list.append([mean,median,std_dev])
+        count = len(list)
+        return_list.append([mean,median,std_dev,count])
     return return_list
 
 
@@ -115,10 +128,15 @@ def plot_confusion_matrix_heatmap(confusion_matrix, players, format="d", title=N
         xticklabels=players,
         yticklabels=players, 
         ax=ax,
-        annot_kws={"size": ANNOT_SIZE}
+        annot_kws={"size": ANNOT_SIZE, "weight": "bold"}
     )
-    ax.set_xlabel(MAP_X_LAB)
-    ax.set_ylabel(MAP_Y_LAB)
+    ax.set_xlabel(MAP_X_LAB, fontsize=X_LABEL_FONTSIZE, fontweight="bold")
+    ax.set_ylabel(MAP_Y_LAB, fontsize=Y_LABEL_FONTSIZE, fontweight="bold")
+
+
+    ax.tick_params(axis='both', which='major', labelsize=XTICK_FONTSIZE- 8)
+    for label in ax.get_xticklabels() + ax.get_yticklabels():
+        label.set_fontweight("bold")
     if title:
         plt.title(title)
     else:
@@ -261,7 +279,7 @@ def display_multiple_distributions(data_lists, ylabel, names_lists=None, bins=10
     """
     sns.set_style(SET_STYLE)
     plt.figure(figsize=(FIGSIZE_X, FIGSIZE_Y))
-    plt.yticks(fontsize=YTICK_FONTSIZE)
+    plt.yticks(fontsize=YTICK_FONTSIZE, fontweight="bold")
     if title:
         plt.title(title, fontsize=TITLE_FONTSIZE, fontweight="bold")
     
@@ -271,26 +289,26 @@ def display_multiple_distributions(data_lists, ylabel, names_lists=None, bins=10
 
     if plot_type == VIO:
         sns.violinplot(data=data_lists, inner=INNER, palette=PALETTE, linewidth=LINEWIDTH)
-        plt.xticks(range(len(names_lists)), names_lists, fontsize=XTICK_FONTSIZE,rotation=XTICK_ROTATION)
+        plt.xticks(range(len(names_lists)), names_lists, fontsize=XTICK_FONTSIZE,rotation=XTICK_ROTATION, fontweight="bold")
 
     elif plot_type == BOX:
         sns.boxplot(data=data_lists, palette=PALETTE, linewidth=LINEWIDTH, saturation=SATURATION)
-        plt.xticks(range(len(names_lists)), names_lists, fontsize=XTICK_FONTSIZE,rotation=XTICK_ROTATION)
+        plt.xticks(range(len(names_lists)), names_lists, fontsize=XTICK_FONTSIZE,rotation=XTICK_ROTATION, fontweight="bold")
 
     else:
         for values, name in zip(data_lists, names_lists):
             if plot_type == HIST:
                 sns.histplot(values, bins=bins, kde=False, label=name, alpha=ALPHA)
-                plt.xticks(fontsize=XTICK_FONTSIZE,rotation=XTICK_ROTATION)
-                plt.legend(fontsize=LEGEND_FONTSIZE)
+                plt.xticks(fontsize=XTICK_FONTSIZE,rotation=XTICK_ROTATION, fontweight="bold")
+                plt.legend(fontsize=LEGEND_FONTSIZE, fontweight="bold")
             elif plot_type == DEN:
                 sns.kdeplot(values, label=name, fill=True, alpha=ALPHA, linewidth=LINEWIDTH)
-                plt.xticks( fontsize=XTICK_FONTSIZE,rotation=XTICK_ROTATION)
-                plt.legend(fontsize=LEGEND_FONTSIZE)
+                plt.xticks( fontsize=XTICK_FONTSIZE,rotation=XTICK_ROTATION, fontweight="bold")
+                plt.legend(fontsize=LEGEND_FONTSIZE, fontweight="bold")
             else:
                 raise ValueError("Unsupported plot_type.")
-        plt.ylabel(Y_LABEL_DIS, fontsize=X_LABEL_FONTSIZE)
-        plt.xlabel(ylabel, fontsize=Y_LABEL_FONTSIZE)
+        plt.ylabel(Y_LABEL_DIS, fontsize=X_LABEL_FONTSIZE, fontweight="bold")
+        plt.xlabel(ylabel, fontsize=Y_LABEL_FONTSIZE, fontweight="bold")
         if log:
             plt.xscale('log')
         if save_path:
@@ -299,9 +317,9 @@ def display_multiple_distributions(data_lists, ylabel, names_lists=None, bins=10
             plt.show()
         return
 
-    plt.xlabel(X_LABEL_DIS, fontsize=X_LABEL_FONTSIZE)
-    plt.yticks(fontsize=YTICK_FONTSIZE)
-    plt.ylabel(ylabel, fontsize=Y_LABEL_FONTSIZE)
+    plt.xlabel(X_LABEL_DIS, fontsize=X_LABEL_FONTSIZE, fontweight="bold")
+    plt.yticks(fontsize=YTICK_FONTSIZE, fontweight="bold")
+    plt.ylabel(ylabel, fontsize=Y_LABEL_FONTSIZE, fontweight="bold")
     if log:
         plt.yscale('log')
 
@@ -334,3 +352,45 @@ def get_csv_files(folder_path, substring_filter=None):
     except Exception as e:
         print(f"An error occurred: {e}")
         return []
+def create_plot(means, std_errors, players, fv, log, save_path=None):
+    """
+    Creates a bar chat that that displays a set of players mean and standard errors over vertices
+    
+    Args:
+        means (list: of list ): The list of means
+        std_errors (list: of list ): The list of std_errors
+        players (list): The list of players
+        fv (list): List of vector counts the data comes from
+        log (bool): Whether to use log scale
+        save_path (str, optional): Path to save figure
+        
+    """
+    plt.figure(figsize=(FIGSIZE_X_BAR, FIGSIZE_Y_BAR))
+    bar_width = BAR_WIDTH
+    x = np.arange(len(players))
+    for i, number in enumerate(fv):
+        plt.bar(x + i*bar_width, means[i], bar_width,
+                yerr=std_errors[i], capsize=5,
+                label=f'{number[1:-1]}')
+    
+    plt.xlabel(X_LABEL_DIS, fontsize=X_LABEL_FONTSIZE_BAR, fontweight='bold')
+    
+    plt.xticks(x + bar_width, players, rotation=BAR_ROTATE, ha='right', fontsize=XTICK_FONTSIZE_BAR, fontweight='bold')
+    plt.yticks(fontsize=XTICK_FONTSIZE_BAR, fontweight='bold')
+    if log:
+        plt.yscale('log')
+        plt.ylabel(Y_LABEL_LOG_BAR, fontsize=Y_LABEL_FONT_BAR-LOG_SUB_FONTSIZE, fontweight='bold')  
+    else:
+        plt.ylabel(Y_LABEL_BAR, fontsize=Y_LABEL_FONT_BAR, fontweight='bold')
+
+    plt.grid(True, linestyle='--', alpha=ALPHA, which='both')
+    
+    legend = plt.legend(title=BAR_LEGEND, fontsize=LEGEND_FONTSIZE, title_fontsize=LEGEND_FONTSIZE)
+    for text in legend.get_texts():
+        text.set_fontweight('bold')
+    
+    plt.tight_layout()
+    if save_path:
+        plt.savefig(save_path, dpi=DPI, bbox_inches=BBOX_INCHES)
+    else:
+        plt.show()
