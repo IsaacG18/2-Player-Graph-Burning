@@ -70,10 +70,12 @@ NUMBER_GEN = 100
 # List of players to be tested
 PLAYERS = FINAL_PLAYERS
 # Default filename and folder for output storage
-FILENAME = "HOLDER"
-FOLDER = "HOLDER"
+FILENAME = "PLACE_HOLDER"
+FOLDER = "PLACE_HOLDER"
 # Different vertex sizes for testing
 SIZE = [10, 15, 20]
+# Different edge sizes for testing
+EDGE_LIKELIHOOD = [95, 100]
 # Number of iterations for each test
 ITER = 100
 
@@ -90,10 +92,9 @@ def test_players(list_players, vertex_count, iterations, file, folder):
     - file: Base filename for output
     - folder: Folder to save results
     """
-    p.test_players_random(list_players, vertex_count, NUMBER_GEN, 100, iterations, file+"_100.csv", folder)
-    print("Completed on Denisty 100 with size ", vertex_count)
-    p.test_players_random(list_players, vertex_count, NUMBER_GEN, 95, iterations, file+"_95.csv", folder)
-    print("Completed on Denisty 95 with size ", vertex_count)
+    for el in EDGE_LIKELIHOOD:
+        p.test_players_random(list_players, vertex_count, NUMBER_GEN, el, iterations, f"{file}_{el}.csv", folder)
+        print(f"Completed on Likelihood {el} with graph size {vertex_count}")
 
 def test_all_players(players, filename, foldername, sizes, iter):
     """
@@ -116,8 +117,8 @@ def play_against_robot_gen(player, vertex_count, num_gen, split_num, first):
     p.test_human_against_player_gen(player, vertex_count, num_gen, split_num, first)
 
 # THIS IS A EXPERIMENTAL TOOL NONE-PRODUCTION TESTED
-def play_against_robot_matrix(player, adj_mat, first):
-    p.test_human_against_player(player, adj_mat, first)
+def play_against_robot_matrix(player, edges, size, first):
+    p.test_human_against_player(player, p.manual_gen_matrix(edges, size), first)
 
 
 def main():

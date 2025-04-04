@@ -288,3 +288,11 @@ def test_human_against_player_gen(player, vertex_count, num_gen, split_num, firs
 # THIS IS A EXPERIMENTAL TOOL NONE-PRODUCTION TESTED
 def test_human_against_player(player, matrix, first):
     run_human(player,matrix, np.zeros(matrix.shape[0]), first)
+
+# THIS IS A EXPERIMENTAL TOOL NONE-PRODUCTION TESTED
+def manual_gen_matrix(edges, size):
+    adj_mat = np.zeros((size,size))
+    for edge in edges:
+        adj_mat[edge[0], edge[1]] = 1
+        adj_mat[edge[1], edge[0]] = 1
+    return adj_mat

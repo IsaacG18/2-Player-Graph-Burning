@@ -15,8 +15,8 @@ EVERYONE_SECOND= "_E_S"
 VAL = "_V"
 TI = "_T"
 IMAGE = "_image"
-STAT_FILE = "/stats.csv"
-WR_FILE = "/win_rate.csv"
+STAT_FILE = "stats.csv"
+WR_FILE = "win_rate.csv"
 PR = "PlayerRate"
 TITLE=""
 
@@ -45,31 +45,55 @@ MC_PLAYERS = ["MC50","MC100","MC150","MC200", "MC250"]
 
 
 # Sets what is visualised
-FOLDER = "Last_HKN"
-FV = ["_10_", "_15_", "_20_"]
-FE = ["","95", "100"]
+FOLDER = "Last_All"
+FV = ["_10_", "_15_","_20_"]
+FE = [""]
 EXTRA=""
 
 # Sets what is visualised
 PLOT_TYPE = res.BOX
-FILTER=[]
-LOG=False
-HEAT=False
-DATA=True
-GET_TIME=True
-GET_VALUE=False
+# Set the data format for the heatmap
 FORMATE = "d"
 
-# Sets out what players are used
+# Add filters to code this should be in the formate [(c.{COLUMN}, "{OPP}",  {EXPRESSION}), (c.{COLUMN}, "{OPP}",  {EXPRESSION}),...]
+# opps include "==", ">", "!=", ">", "=>", "<=", "in", "not in"
+# do not uses to select player to play against or as
+FILTER=[]
+# Sets distribution to be logorthimic data
+LOG=True
+# Set to get a heatmap
+HEAT=False
+# Set to get distibutions, data, stats
+DATA=True
+# Gets graphs of total time taken
+GET_TIME=True
+# Gets graphs of value of game
+GET_VALUE=False
+
+
+# Set if you want to VERSE to appear in the graphs
 GRAPH_VERSE = False
+# Set if you want to VERSE to appear in the stats
 STAT_VERSE = False
 VERSE = "GNSDFS"
-PLAYER = HKN_PLAYERS
+PLAYER = FINAL_PLAYERS
 G_PLAYERS, S_PLAYERS = PLAYER, PLAYER
-if GRAPH_VERSE:
-    G_PLAYERS = G_PLAYERS + [VERSE]
-if STAT_VERSE:
-    S_PLAYERS = S_PLAYERS + [VERSE]
+#This decides if you run the set experiments or a custom version
+CUSTOM = False
+
+EXP_SET =   [  
+               {"PLAYERS":HKN_PLAYERS,          "GV":False, "FOLDER":"Last_HKN",  "HEAT":False, "EXTRA":"",         "FVERTEX":FV},
+               {"PLAYERS":FDM_PLAYERS,          "GV":False, "FOLDER":"Last_FDM",  "HEAT":False, "EXTRA":"",         "FVERTEX":FV},
+               {"PLAYERS":GP_PLAYERS,            "GV":True,  "FOLDER":"Last_GP_F", "HEAT":False, "EXTRA":"G",        "FVERTEX":FV},
+               {"PLAYERS":GP_PLAYERS[:-1],       "GV":True,  "FOLDER":"Last_GP_F", "HEAT":False, "EXTRA":"SIM",     "FVERTEX":FV},
+               {"PLAYERS":F_PLAYERS,            "GV":True,  "FOLDER":"Last_GP_F", "HEAT":False, "EXTRA":"F",         "FVERTEX":FV},
+               {"PLAYERS":MC_PLAYERS,           "GV":False, "FOLDER":"Last_MC"  , "HEAT":False, "EXTRA":"",         "FVERTEX":FV},
+               {"PLAYERS":FINAL_PLAYERS,        "GV":False, "FOLDER":"Last_all" , "HEAT":False,  "EXTRA":"all1015",  "FVERTEX":FV[:-1]},
+               {"PLAYERS":FINAL_PLAYERS[:-3],   "GV":False, "FOLDER":"Last_all" , "HEAT":True,  "EXTRA":"ex1015",   "FVERTEX":FV[:-1]},
+               {"PLAYERS":FINAL_PLAYERS[2:],    "GV":False, "FOLDER":"Last_all" , "HEAT":True,  "EXTRA":"all20",    "FVERTEX":FV[-1:]},
+               {"PLAYERS":FINAL_PLAYERS[2:-3],  "GV":False, "FOLDER":"Last_all" , "HEAT":True,  "EXTRA":"ex20",     "FVERTEX":FV[-1:]},
+               ]
+
 
 
 
@@ -202,37 +226,93 @@ def get_all_stat(folder,fv,fe, players, againsts,stat,filter=[]):
     stat.append([folder+EVERYONE_FIRST+VAL+fv+fe]+get_stats(folder, filter_name=fv+fe, data_filters=player_vs_filter(players, True,extra=filter)))
     stat.append([folder+EVERYONE_SECOND+VAL+fv+fe]+get_stats(folder, filter_name=fv+fe, data_filters=player_vs_filter(players, False,extra=filter)))
 
-def main():
-    if os.path.isdir(FOLDER):
-        os.makedirs(FOLDER+IMAGE, exist_ok=True)
+def get_all_bars(folder, players,stats, fv, extra):
+    for j in [True, False]:
+        first_means, first_std_err= [], []
+        second_means, second_std_err = [], []
+        for row in stats:
+            row_means = []
+            row_std_errors = []
+            if EVERYONE_FIRST+TI in row[0]:
+                for i in range(len(players)):
+                    mean = row[i+1][0]
+                    std = row[i+1][2]
+                    sample_size = row[i+1][3]
+                    std_error = std / np.sqrt(sample_size)
+                    row_means.append(mean)
+                    row_std_errors.append(std_error)
+                first_means.append(row_means)
+                first_std_err.append(row_std_errors)
+            if EVERYONE_SECOND+TI in row[0]:
+                for i in range(len(players)):
+                    mean = row[i+1][0]
+                    std = row[i+1][2]
+                    sample_size = row[i+1][3]
+                    std_error = std / np.sqrt(sample_size)
+                    row_means.append(mean)
+                    row_std_errors.append(std_error)
+                second_means.append(row_means)
+                second_std_err.append(row_std_errors)
+        res.create_plot(first_means, first_std_err, players, fv, j, f"{folder}{IMAGE}/{extra}{EVERYONE_FIRST}{TI}{str(j)}BAR")
+        res.create_plot(second_means, second_std_err, players, fv, j, f"{folder}{IMAGE}/{extra}{EVERYONE_SECOND}{TI}{str(j)}BAR")
+
+
+def run_tests(players, folder, gv, sv, extra,heat, fv, logs):
+    g_player = players
+    s_player = players
+    print(f"Wge are plotting and gathering stats from {players}")
+    if gv:
+        s_player = s_player +[VERSE]
+        g_player = g_player +[VERSE]
+    elif sv:
+        s_player = s_player +[VERSE]
+
+    print(f"We are getting data about these strategies {g_player}")
+    if os.path.isdir(folder):
+        os.makedirs(folder+IMAGE, exist_ok=True)
     else:
-        print(f"Folder: {FOLDER} does not exists")
+        print(f"Folder: {folder} does not exists")
         return
 
-    if HEAT:
-        for i in FV:
+    if heat:
+        print("We have started the Heatmap process this can take a monment")
+        for v in fv:
+            print(f"We are working in {v} vertices")
             win_rates=[]
-            confusion_matrix =get_verse_winrate(FOLDER,i,"", G_PLAYERS, win_rates)
-            res.plot_confusion_matrix_heatmap(confusion_matrix, G_PLAYERS, FORMATE, TITLE,f"{FOLDER}{IMAGE}/{PR}{i}")
+            confusion_matrix =get_verse_winrate(folder,v,"", g_player, win_rates)
+            res.plot_confusion_matrix_heatmap(confusion_matrix, g_player, FORMATE, TITLE,f"{folder}{IMAGE}/{PR}{v}{extra}")
 
-    if DATA:
+    print(f"We are plotting and gathering stats")
+    for a, log in enumerate(logs):
+        print(f"Log: {log}, Plot type: {PLOT_TYPE}, Verse: {VERSE}")
         win_rates=[]
         stat=[]
-        for fv in FV:
+        for v in fv:
             for fe in FE:
-                get_set_Plots(FOLDER,fv,fe, G_PLAYERS, VERSE, EXTRA, FILTER, LOG, PLOT_TYPE)
-                get_all_WR(FOLDER,fv,fe, S_PLAYERS, VERSE, win_rates, FILTER)
-                get_all_stat(FOLDER,fv,fe, S_PLAYERS, VERSE, stat, FILTER)
-                        
-        with open(FOLDER+IMAGE+STAT_FILE, mode="w", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerow(["Names"]+S_PLAYERS)
-            for row in stat:
-                writer.writerow([row[0]] + [item for item in row[1:]]) 
-        with open(FOLDER+IMAGE+WR_FILE, mode="w", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerow(["Names"]+S_PLAYERS)
-            for row in win_rates:
-                writer.writerow([row[0]] + [item for item in row[1:]]) 
+                get_set_Plots(folder,v,fe, g_player, VERSE, extra+str(log), FILTER, log, PLOT_TYPE)
+                if a== 0:
+                    get_all_WR(folder,v,fe, s_player, VERSE, win_rates, FILTER)
+                    get_all_stat(folder,v,fe, s_player, VERSE, stat, FILTER)
+        if a== 0:
+            with open(folder+IMAGE+"/"+extra+STAT_FILE, mode="w", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerow(["Names"]+s_player)
+                for row in stat:
+                    writer.writerow([row[0]] + [item for item in row[1:]]) 
+            with open(folder+IMAGE+"/"+extra+WR_FILE, mode="w", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerow(["Names"]+s_player)
+                for row in win_rates:
+                    writer.writerow([row[0]] + [item for item in row[1:]])
+            get_all_bars(folder, g_player, stat, fv, extra)
+            
+
+def main():
+    if CUSTOM:
+        run_tests(PLAYER, FOLDER, GRAPH_VERSE, STAT_VERSE, EXTRA,HEAT, FV, [LOG])
+    else:
+        for exp in EXP_SET:
+            run_tests(exp["PLAYERS"], exp["FOLDER"], exp["GV"], False, exp["EXTRA"],exp["HEAT"], exp["FVERTEX"], [False, True])
+        
 if __name__ == "__main__":
     main()
