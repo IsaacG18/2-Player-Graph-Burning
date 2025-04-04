@@ -1,6 +1,7 @@
 **Running the players against each other togather data**
 
 First naviate to the file.
+
     Graph_Sim\test_players.py
 
 To run test on a set of players you first have to select one, here is a set list for each experiment. Above this is the list of all instauated players
@@ -11,12 +12,15 @@ To customise what code is run change these set of constant
 
 ![Consts for test_players.py](readme_image\const_test_players.png)
 
-Once it is set up the way you like it then run in the Graph_Sim folder  
+Once it is set up the way you like it then run in the Graph_Sim folder 
+ 
     python test_player.py
 
 We do indivdual run these due to some of them taking a long time and therefore we do not have an automated script to run all 5 experiments.
 
 NOTE TO RUN THE SET VISUALSATION YOU MUST RUN ALL TEST THEREFORE I WOULD RECOMMEND ONLY RUNNNING ON A LOW ITERATION COUNT
+
+
 
 **Running the code to  against each other togather data**
 

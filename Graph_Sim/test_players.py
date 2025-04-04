@@ -65,7 +65,7 @@ GP_F_PLAYERS = [gns_dfs , gp_dfs_sim, f_dfs_sim, gp_dfs_iso, f_dfs_iso, gp_dfs_n
 MC_PLAYERS = [gns_dfs, mc50, mc100, mc150,mc200,mc250]
 
 #SET FILENAME AND FOLDER AS INDEX 0 of TUPLE and PLAYERS AS INDEX 1
-SUGGESTED_PLAYER_NAMES = [("Last_HNK", HKN_PLAYERS), ("Last_FDM", FDM_PLAYERS), ("Last_GP_F", GP_F_PLAYERS), ("Last_MC", MC_PLAYERS)]
+SUGGESTED_PLAYER_NAMES = [("Last_HKN", HKN_PLAYERS), ("Last_FDM", FDM_PLAYERS), ("Last_GP_F", GP_F_PLAYERS), ("Last_MC", MC_PLAYERS)]
 
 
 
