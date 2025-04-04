@@ -64,6 +64,10 @@ GP_F_PLAYERS = [gns_dfs , gp_dfs_sim, f_dfs_sim, gp_dfs_iso, f_dfs_iso, gp_dfs_n
 # Monte Carlo Experiment Strategies
 MC_PLAYERS = [gns_dfs, mc50, mc100, mc150,mc200,mc250]
 
+#SET FILENAME AND FOLDER AS INDEX 0 of TUPLE and PLAYERS AS INDEX 1
+SUGGESTED_PLAYER_NAMES = [("Last_HNK", HKN_PLAYERS), ("Last_FDM", FDM_PLAYERS), ("Last_GP_F", GP_F_PLAYERS), ("Last_MC", MC_PLAYERS), ("Last_all", FINAL_PLAYERS)]
+
+
 # Number for Matrix Generator
 NUMBER_GEN = 100
 
@@ -78,6 +82,7 @@ SIZE = [10, 15, 20]
 EDGE_LIKELIHOOD = [95, 100]
 # Number of iterations for each test
 ITER = 100
+
 
 
 def test_players(list_players, vertex_count, iterations, file, folder):
