@@ -98,6 +98,21 @@ EXP_SET =   [
 
 
 def get_multiple_distribution(folder, filter_name=None, column=c.VALUE, names_lists=None, bins=10, plot_type=res.HIST, title=None, data_filters=[[]], file_path=None, log=False):
+    """
+    Generates and displays multiple distributions of data from CSV files.
+    
+    Parameters:
+        folder (str): Path to the folder containing CSV files.
+        filter_name (str, optional): Filter for file selection.
+        column (str/bool): Column to be used for distribution.
+        names_lists (list, optional): Names for different data groups.
+        bins (int): Number of bins for histogram.
+        plot_type (str): Type of plot to be displayed.
+        title (str, optional): Title of the plot.
+        data_filters (list): Filters applied to the data.
+        file_path (str, optional): Path to save the plot.
+        log (bool): Whether to apply log scaling.
+    """
     data = res.combine_csv(res.get_csv_files(folder, filter_name), folder)
     dicts = None
     try:
@@ -131,6 +146,17 @@ def get_multiple_distribution(folder, filter_name=None, column=c.VALUE, names_li
 
 
 def get_win_rate(folder, filter_name=None,data_filters=[[]]):
+    """
+    Computes the win rate from the dataset.
+    
+    Parameters:
+        folder (str): Path to the folder containing CSV files.
+        filter_name (str, optional): Filter for file selection.
+        data_filters (list): Filters applied to the data.
+    
+    Returns:
+        list: Win rate results. (WINS, DRAWS, LOSES)
+    """
     data = res.combine_csv(res.get_csv_files(folder, filter_name), folder)
     try:
         return [res.get_win_rate(dict) for dict in [res.get_filtered_rows(data, data_filter) for data_filter in data_filters]]
@@ -142,6 +168,18 @@ def get_win_rate(folder, filter_name=None,data_filters=[[]]):
     
 
 def get_stats(folder, filter_name=None, column=c.VALUE, data_filters=[[]]):
+    """
+    Computes statistical analysis on specified data.
+    
+    Parameters:
+        folder (str): Path to the folder containing CSV files.
+        filter_name (str, optional): Filter for file selection.
+        column (str/bool): Column to be analyzed. Column name or bool for player 1 total time and false for player 2
+        data_filters (list): Filters applied to the data.
+    
+    Returns:
+        list: Computed statistics in formate [mean, medium, std, sample size]
+    """
     data = res.combine_csv(res.get_csv_files(folder, filter_name), folder)
     dicts = None
     try:
@@ -171,6 +209,18 @@ def get_stats(folder, filter_name=None, column=c.VALUE, data_filters=[[]]):
  
     
 def player_vs_filter(players, player_1, against=None, extra=[]):
+    """
+    Generates filtering conditions for player-vs-player analysis.
+    
+    Parameters:
+        players (list): List of player names.
+        player_1 (bool): Determines which player to filter.
+        against (str, optional): Opponent player name.
+        extra (list, optional): Additional filters.
+    
+    Returns:
+        list: Filters for data selection.
+    """
     if player_1:
         return [[(c.PLAYER1, "==",  player)]+extra if against is None else [(c.PLAYER1, "==",  player), (c.PLAYER2, "==", against)]+extra for player in players]
     else:
@@ -178,6 +228,20 @@ def player_vs_filter(players, player_1, against=None, extra=[]):
     
 
 def get_verse_winrate(folder,fv,fe, players,win_rates, filter=[]):
+    """
+    Computes the win rate matrix for players against each other.
+    
+    Parameters:
+        folder (str): Path to the folder containing CSV files.
+        fv (str): Filter vertex.
+        fe (str): Filter edges.
+        players (list): List of player names.
+        win_rates (list): List to store win rate results.
+        filter (list, optional): Additional filters.
+    
+    Returns:
+        np.array: Confusion matrix with win rates.
+    """
     num_players = len(players)
     confusion_matrix = np.zeros((num_players, num_players), dtype=int)
     for i in range(num_players):
@@ -189,6 +253,20 @@ def get_verse_winrate(folder,fv,fe, players,win_rates, filter=[]):
     
 
 def get_set_Plots(folder,fv,fe, players, againsts, extra = "", filters=[], log = False, pt=res.BOX):
+    """
+    Generates multiple plots for different statistics related to player performance.
+    
+    Parameters:
+        folder (str): Path to the folder containing CSV files.
+        fv (str): Filter vertex.
+        fe (str): Filter edges.
+        players (list): List of players.
+        againsts (list): List of opponents.
+        extra (str, optional): Extra string for file naming.
+        filters (list, optional): Filters to apply.
+        log (bool, optional): Whether to apply log scaling.
+        pt (str): Type of plot.
+    """
     if GET_TIME:
         get_multiple_distribution(folder, filter_name=fv+fe, column=True, names_lists=players, bins=25, plot_type=pt, title=None,
                             data_filters=player_vs_filter(players, True, againsts,filters), file_path=f"{folder}{IMAGE}/{pt}{extra}{fv}{fe}{ALL_FIRST}{TI}", log=log )
@@ -210,6 +288,21 @@ def get_set_Plots(folder,fv,fe, players, againsts, extra = "", filters=[], log =
 
 
 def get_all_WR(folder,fv,fe, players, againsts, win_rates,filter=[]):
+    """
+    Collects win rates for all player matchups and stores the results.
+    
+    Parameters:
+        folder (str): Path to the folder containing CSV files.
+        fv (str): Filter vertex.
+        fe (str): Filter edges.
+        players (list): List of players.
+        againsts (list): List of opponents.
+        win_rates (list): List to store win rates.
+        filter (list, optional): Additional filters.
+    
+    Returns:
+        list: Updated win rates list.
+    """
     win_rates.append([folder+ALL_FIRST+fv+fe]+get_win_rate(folder, filter_name=fv+fe,data_filters=player_vs_filter(players, True, againsts,filter)))
     win_rates.append([folder+ALL_SECOND+fv+fe]+get_win_rate(folder, filter_name=fv+fe,data_filters=player_vs_filter(players, False, againsts,filter)))
     win_rates.append([folder+EVERYONE_FIRST+fv+fe]+get_win_rate(folder, filter_name=fv+fe,data_filters=player_vs_filter(players, True,extra=filter)))
@@ -227,6 +320,16 @@ def get_all_stat(folder,fv,fe, players, againsts,stat,filter=[]):
     stat.append([folder+EVERYONE_SECOND+VAL+fv+fe]+get_stats(folder, filter_name=fv+fe, data_filters=player_vs_filter(players, False,extra=filter)))
 
 def get_all_bars(folder, players,stats, fv, extra):
+    """
+    Creates bar plots for player statistics.
+    
+    Parameters:
+        folder (str): Path to the folder containing CSV files.
+        players (list): List of players.
+        stats (list): Statistical data.
+        fv (str): Fitler vertexs
+        extra (str): Extra string for file naming.
+    """
     for j in [True, False]:
         first_means, first_std_err= [], []
         second_means, second_std_err = [], []
@@ -258,6 +361,19 @@ def get_all_bars(folder, players,stats, fv, extra):
 
 
 def run_tests(players, folder, gv, sv, extra,heat, fv, logs):
+    """
+    Runs statistical and visualization tests on player data.
+    
+    Parameters:
+        players (list): List of players.
+        folder (str): Path to the folder containing CSV files.
+        gv (bool): Graph Against flag.
+        sv (bool): Statistics Against flag.
+        extra (str): Extra string for file naming.
+        heat (bool): Whether to generate a heatmap.
+        fv (list): List of Filter Vertex
+        logs (list): Logging the data.
+    """
     g_player = players
     s_player = players
     print(f"Wge are plotting and gathering stats from {players}")
