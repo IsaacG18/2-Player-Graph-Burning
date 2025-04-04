@@ -49,17 +49,6 @@ FIGSIZE_Y_BAR = 7
 XTICK_FONTSIZE_HEAT = 13
 
 def data_csv(file_name, folder_path, data=None):
-    """
-    Read a CSV file and optionally concatenate with existing data.
-    
-    Args:
-        file_name (str): Name of the CSV file to read
-        folder_path (str): Path to the folder containing the file
-        data (pd.DataFrame, optional): Existing DataFrame to concatenate with
-    
-    Returns:
-        pd.DataFrame: The loaded data (concatenated with existing data if provided)
-    """
     file_path = os.path.join(folder_path, file_name)
     data_new = pd.read_csv(file_path)
     if data is None or data.empty:
@@ -68,16 +57,6 @@ def data_csv(file_name, folder_path, data=None):
     return pd.concat([data, data_new], ignore_index=True)
 
 def combine_csv(file_list, folders):
-    """
-    Combine multiple CSV files into a single DataFrame.
-    
-    Args:
-        file_list (list): List of CSV file names
-        folders (str or list): Folder path(s) containing the files
-    
-    Returns:
-        pd.DataFrame: Combined data from all CSV files
-    """
     data = None 
     folder_list = folders
     if type(folders) != list:
@@ -88,15 +67,6 @@ def combine_csv(file_list, folders):
     return data
 
 def stats(data):
-    """
-    Calculate basic statistics (mean, median, std dev) for each list in the input.
-    
-    Args:
-        data (list of lists): Input data to analyze
-    
-    Returns:
-        list: List of [mean, median, std_dev] for each input list
-    """
     return_list = []
     for list in data:
         mean = statistics.mean(list)
@@ -108,16 +78,6 @@ def stats(data):
 
 
 def plot_confusion_matrix_heatmap(confusion_matrix, players, format="d", title=None, save_path=None):
-    """
-    Plot a confusion matrix as a heatmap.
-    
-    Args:
-        confusion_matrix (2D array): The confusion matrix data
-        players (list): List of player names for axis labels
-        format (str, optional): Format string for annotations
-        title (str, optional): Plot title
-        save_path (str, optional): Path to save the figure (if None, shows plot)
-    """
     fig, ax = plt.subplots(figsize=(FIGSIZE_X, FIGSIZE_Y))
 
     sns.heatmap(
@@ -149,16 +109,6 @@ def plot_confusion_matrix_heatmap(confusion_matrix, players, format="d", title=N
 
 
 def get_filtered_rows(data, filters):
-    """
-    Filter rows from a DataFrame based on multiple conditions.
-    
-    Args:
-        data (pd.DataFrame): Input data to filter
-        filters (list): List of filter conditions (column, operator, value)
-    
-    Returns:
-        list: Filtered data as a list of dictionaries
-    """
     filtered_data = data.copy()
 
 
@@ -185,18 +135,6 @@ def get_filtered_rows(data, filters):
     return filtered_data.to_dict(orient="records")
 
 def get_column_values(data_dict, column, player1_total=False, player2_total=False):
-    """
-    Extract column values from a list of dictionaries.
-    
-    Args:
-        data_dict (list of dicts): Input data
-        column (str or list): Column name(s) to extract
-        player1_total (bool): Whether to calculate P1 total
-        player2_total (bool): Whether to calculate P2 total
-    
-    Returns:
-        list: Extracted values
-    """
     if type(column) == list and len(column)+player1_total+player2_total>1:
         extracted_data = []
         for row in data_dict:
@@ -222,15 +160,6 @@ def get_column_values(data_dict, column, player1_total=False, player2_total=Fals
     
 
 def get_win_rate(data_dict):
-    """
-    Calculate win/tie/loss counts from match data.
-    
-    Args:
-        data_dict (list of dicts): Match data containing 'VALUE' field
-    
-    Returns:
-        tuple: (wins, ties, losses) counts
-    """
     total_wins = 0
     total_ties = 0
     total_loses = 0
@@ -246,15 +175,6 @@ def get_win_rate(data_dict):
 
     
 def get_total_times(data_dict):
-    """
-    Calculate total times for both players.
-    
-    Args:
-        data_dict (list of dicts): Match data
-    
-    Returns:
-        tuple: (player1_totals, player2_totals) as lists
-    """
     player1_total = []
     player2_total = []
     for row in data_dict:
@@ -264,19 +184,6 @@ def get_total_times(data_dict):
     
 
 def display_multiple_distributions(data_lists, ylabel, names_lists=None, bins=10, plot_type=HIST, title=None, save_path=None, log=False):
-    """
-    Display multiple distributions using various plot types.
-    
-    Args:
-        data_lists (list of lists): Data to plot
-        ylabel (str): Y-axis label
-        names_lists (list, optional): Names for each distribution
-        bins (int, optional): Number of bins for histograms
-        plot_type (str): Type of plot (HIST, DEN, VIO, BOX)
-        title (str, optional): Plot title
-        save_path (str, optional): Path to save figure
-        log (bool): Whether to use log scale
-    """
     sns.set_style(SET_STYLE)
     plt.figure(figsize=(FIGSIZE_X, FIGSIZE_Y))
     plt.yticks(fontsize=YTICK_FONTSIZE, fontweight="bold")
@@ -329,16 +236,6 @@ def display_multiple_distributions(data_lists, ylabel, names_lists=None, bins=10
         plt.show()
 
 def get_csv_files(folder_path, substring_filter=None):
-    """
-    Get CSV files from a folder, optionally filtered by substring.
-    
-    Args:
-        folder_path (str): Path to folder to search
-        substring_filter (str, optional): Substring to filter filenames
-    
-    Returns:
-        list: Matching CSV filenames
-    """
     try:
         if not os.path.isdir(folder_path):
             raise FileNotFoundError(f"The folder '{folder_path}' does not exist.")
@@ -353,18 +250,6 @@ def get_csv_files(folder_path, substring_filter=None):
         print(f"An error occurred: {e}")
         return []
 def create_plot(means, std_errors, players, fv, log, save_path=None):
-    """
-    Creates a bar chat that that displays a set of players mean and standard errors over vertices
-    
-    Args:
-        means (list: of list ): The list of means
-        std_errors (list: of list ): The list of std_errors
-        players (list): The list of players
-        fv (list): List of vector counts the data comes from
-        log (bool): Whether to use log scale
-        save_path (str, optional): Path to save figure
-        
-    """
     plt.figure(figsize=(FIGSIZE_X_BAR, FIGSIZE_Y_BAR))
     bar_width = BAR_WIDTH
     x = np.arange(len(players))

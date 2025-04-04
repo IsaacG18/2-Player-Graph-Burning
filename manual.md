@@ -11,7 +11,6 @@ To customise what code is run change these set of constant
 
 ![Consts for test_players.py](readme_image\const_test_players.png)
 
-WARNING THIS WILL ADD TO THE EXISTING FILES IF YOU PUT IT IN THE SAME FOLDER
 Once it is set up the way you like it then run in the Graph_Sim folder  
     python test_player.py
 

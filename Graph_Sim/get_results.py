@@ -99,11 +99,10 @@ EXP_SET =   [
 
 def get_multiple_distribution(folder, filter_name=None, column=c.VALUE, names_lists=None, bins=10, plot_type=res.HIST, title=None, data_filters=[[]], file_path=None, log=False):
     """
-    Generates and displays multiple distributions of data from CSV files.
     
     Parameters:
         folder (str): Path to the folder containing CSV files.
-        filter_name (str, optional): Filter for file selection.
+        filter_name (str, optional): Filter for selecting which files
         column (str/bool): Column to be used for distribution.
         names_lists (list, optional): Names for different data groups.
         bins (int): Number of bins for histogram.
@@ -147,11 +146,9 @@ def get_multiple_distribution(folder, filter_name=None, column=c.VALUE, names_li
 
 def get_win_rate(folder, filter_name=None,data_filters=[[]]):
     """
-    Computes the win rate from the dataset.
-    
     Parameters:
         folder (str): Path to the folder containing CSV files.
-        filter_name (str, optional): Filter for file selection.
+        filter_name (str, optional): Filter for selecting which files
         data_filters (list): Filters applied to the data.
     
     Returns:
@@ -169,11 +166,10 @@ def get_win_rate(folder, filter_name=None,data_filters=[[]]):
 
 def get_stats(folder, filter_name=None, column=c.VALUE, data_filters=[[]]):
     """
-    Computes statistical analysis on specified data.
     
     Parameters:
         folder (str): Path to the folder containing CSV files.
-        filter_name (str, optional): Filter for file selection.
+        filter_name (str, optional): Filter for selecting which files
         column (str/bool): Column to be analyzed. Column name or bool for player 1 total time and false for player 2
         data_filters (list): Filters applied to the data.
     
@@ -210,7 +206,6 @@ def get_stats(folder, filter_name=None, column=c.VALUE, data_filters=[[]]):
     
 def player_vs_filter(players, player_1, against=None, extra=[]):
     """
-    Generates filtering conditions for player-vs-player analysis.
     
     Parameters:
         players (list): List of player names.
@@ -229,8 +224,6 @@ def player_vs_filter(players, player_1, against=None, extra=[]):
 
 def get_verse_winrate(folder,fv,fe, players,win_rates, filter=[]):
     """
-    Computes the win rate matrix for players against each other.
-    
     Parameters:
         folder (str): Path to the folder containing CSV files.
         fv (str): Filter vertex.
@@ -240,7 +233,7 @@ def get_verse_winrate(folder,fv,fe, players,win_rates, filter=[]):
         filter (list, optional): Additional filters.
     
     Returns:
-        np.array: Confusion matrix with win rates.
+        np.array: Confusion matrix with win minuse loses.
     """
     num_players = len(players)
     confusion_matrix = np.zeros((num_players, num_players), dtype=int)
@@ -254,14 +247,12 @@ def get_verse_winrate(folder,fv,fe, players,win_rates, filter=[]):
 
 def get_set_Plots(folder,fv,fe, players, againsts, extra = "", filters=[], log = False, pt=res.BOX):
     """
-    Generates multiple plots for different statistics related to player performance.
-    
     Parameters:
         folder (str): Path to the folder containing CSV files.
         fv (str): Filter vertex.
         fe (str): Filter edges.
         players (list): List of players.
-        againsts (list): List of opponents.
+        againsts (str): opponents.
         extra (str, optional): Extra string for file naming.
         filters (list, optional): Filters to apply.
         log (bool, optional): Whether to apply log scaling.
@@ -289,7 +280,6 @@ def get_set_Plots(folder,fv,fe, players, againsts, extra = "", filters=[], log =
 
 def get_all_WR(folder,fv,fe, players, againsts, win_rates,filter=[]):
     """
-    Collects win rates for all player matchups and stores the results.
     
     Parameters:
         folder (str): Path to the folder containing CSV files.
@@ -319,9 +309,31 @@ def get_all_stat(folder,fv,fe, players, againsts,stat,filter=[]):
     stat.append([folder+EVERYONE_FIRST+VAL+fv+fe]+get_stats(folder, filter_name=fv+fe, data_filters=player_vs_filter(players, True,extra=filter)))
     stat.append([folder+EVERYONE_SECOND+VAL+fv+fe]+get_stats(folder, filter_name=fv+fe, data_filters=player_vs_filter(players, False,extra=filter)))
 
+
+def get_means_std_err(row, players):
+    """
+    
+    Parameters:
+        row (list): A row of data including mean, std, and start
+        players (list): List of players.
+
+    Returns:
+        A list of means and std errors for the row
+    """
+    row_means = []
+    row_std_errors = []
+    for i in range(len(players)):
+        mean = row[i+1][0]
+        std = row[i+1][2]
+        sample_size = row[i+1][3]
+        std_error = std / np.sqrt(sample_size)
+        row_means.append(mean)
+        row_std_errors.append(std_error)
+    return (row_means, row_std_errors)
+            
+
 def get_all_bars(folder, players,stats, fv, extra):
     """
-    Creates bar plots for player statistics.
     
     Parameters:
         folder (str): Path to the folder containing CSV files.
@@ -335,26 +347,12 @@ def get_all_bars(folder, players,stats, fv, extra):
             first_means, first_std_err= [], []
             second_means, second_std_err = [], []
             for row in stats:
-                row_means = []
-                row_std_errors = []
                 if EVERYONE_FIRST+TI in row[0]:
-                    for i in range(len(players)):
-                        mean = row[i+1][0]
-                        std = row[i+1][2]
-                        sample_size = row[i+1][3]
-                        std_error = std / np.sqrt(sample_size)
-                        row_means.append(mean)
-                        row_std_errors.append(std_error)
+                    row_means, row_std_errors = get_means_std_err(row, players)
                     first_means.append(row_means)
                     first_std_err.append(row_std_errors)
                 if EVERYONE_SECOND+TI in row[0]:
-                    for i in range(len(players)):
-                        mean = row[i+1][0]
-                        std = row[i+1][2]
-                        sample_size = row[i+1][3]
-                        std_error = std / np.sqrt(sample_size)
-                        row_means.append(mean)
-                        row_std_errors.append(std_error)
+                    row_means, row_std_errors = get_means_std_err(row, players)
                     second_means.append(row_means)
                     second_std_err.append(row_std_errors)
             res.create_plot(first_means, first_std_err, players, fv, j, f"{folder}{IMAGE}/{extra}{EVERYONE_FIRST}{TI}{str(j)}BAR")
@@ -365,8 +363,6 @@ def get_all_bars(folder, players,stats, fv, extra):
 
 def run_tests(players, folder, gv, sv, extra,heat, fv, logs):
     """
-    Runs statistical and visualization tests on player data.
-    
     Parameters:
         players (list): List of players.
         folder (str): Path to the folder containing CSV files.
