@@ -330,34 +330,37 @@ def get_all_bars(folder, players,stats, fv, extra):
         fv (str): Fitler vertexs
         extra (str): Extra string for file naming.
     """
-    for j in [True, False]:
-        first_means, first_std_err= [], []
-        second_means, second_std_err = [], []
-        for row in stats:
-            row_means = []
-            row_std_errors = []
-            if EVERYONE_FIRST+TI in row[0]:
-                for i in range(len(players)):
-                    mean = row[i+1][0]
-                    std = row[i+1][2]
-                    sample_size = row[i+1][3]
-                    std_error = std / np.sqrt(sample_size)
-                    row_means.append(mean)
-                    row_std_errors.append(std_error)
-                first_means.append(row_means)
-                first_std_err.append(row_std_errors)
-            if EVERYONE_SECOND+TI in row[0]:
-                for i in range(len(players)):
-                    mean = row[i+1][0]
-                    std = row[i+1][2]
-                    sample_size = row[i+1][3]
-                    std_error = std / np.sqrt(sample_size)
-                    row_means.append(mean)
-                    row_std_errors.append(std_error)
-                second_means.append(row_means)
-                second_std_err.append(row_std_errors)
-        res.create_plot(first_means, first_std_err, players, fv, j, f"{folder}{IMAGE}/{extra}{EVERYONE_FIRST}{TI}{str(j)}BAR")
-        res.create_plot(second_means, second_std_err, players, fv, j, f"{folder}{IMAGE}/{extra}{EVERYONE_SECOND}{TI}{str(j)}BAR")
+    try:
+        for j in [True, False]:
+            first_means, first_std_err= [], []
+            second_means, second_std_err = [], []
+            for row in stats:
+                row_means = []
+                row_std_errors = []
+                if EVERYONE_FIRST+TI in row[0]:
+                    for i in range(len(players)):
+                        mean = row[i+1][0]
+                        std = row[i+1][2]
+                        sample_size = row[i+1][3]
+                        std_error = std / np.sqrt(sample_size)
+                        row_means.append(mean)
+                        row_std_errors.append(std_error)
+                    first_means.append(row_means)
+                    first_std_err.append(row_std_errors)
+                if EVERYONE_SECOND+TI in row[0]:
+                    for i in range(len(players)):
+                        mean = row[i+1][0]
+                        std = row[i+1][2]
+                        sample_size = row[i+1][3]
+                        std_error = std / np.sqrt(sample_size)
+                        row_means.append(mean)
+                        row_std_errors.append(std_error)
+                    second_means.append(row_means)
+                    second_std_err.append(row_std_errors)
+            res.create_plot(first_means, first_std_err, players, fv, j, f"{folder}{IMAGE}/{extra}{EVERYONE_FIRST}{TI}{str(j)}BAR")
+            res.create_plot(second_means, second_std_err, players, fv, j, f"{folder}{IMAGE}/{extra}{EVERYONE_SECOND}{TI}{str(j)}BAR")
+    except Exception as e:
+        print(f"ERROR WITH BAR: {folder}, {players} {fv}, {extra}. ERROR IS {e}")
 
 
 def run_tests(players, folder, gv, sv, extra,heat, fv, logs):
