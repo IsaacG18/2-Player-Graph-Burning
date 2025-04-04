@@ -1,7 +1,33 @@
 # 2-Player-Graph-Burning
 
-To run the code it requires a few steps for set up
+This code base is to test Algorthim that play 2 Player Graph Burning Algorthim against each other and then visualise it.
 
+All important files are in  folder Graph_Sim:
+This containts all the Last_* which are the data from each of the experiments.
+
+Other files
+const.py containts the csv heading names 
+generate_naive_strategies.py containt the code for GNS, and DFS
+get_results.py containt the code to read the data and then send it to be visulasised
+hashmap_gns.py containts the code to run Hashmap
+heuristic_guided_search.py containst te code for Filter and Guided search included the heurstics for it
+heursitcs_search.py containst all the code for the heursitics searchs 
+instatuated_player.py has the code for the player class and converts all the algorthim from other python into userable players
+monte_carlo.py has the code to run monte carlo search tree algorthom
+ngs_unit_tests.py containt unittest for ngs
+normal_graph_sim.py containts the code create and burn graphs
+play.py is the file that takes 2 players and runs them against each other
+results.py creates all the visulasiation with the code
+test_players.py is where you call to test the players against each other
+
+
+### Requirements
+
+* Python 3.11
+* Packages: listed in `requirements.txt` 
+* Tested on Windows 10
+
+To run the code it requires a few steps for set up
 # Step 1 install python and pip
 This code uses Python 3.11. If not installed on your system, then download it from the [official Python website](https://www.python.org/downloads/).
 
@@ -33,64 +59,5 @@ Then navigate to the project directory in the terminal and run the command to cr
 Then finally run this command to install the packages that you will uses
      pip install -r requirements.txt
 
-**Running the players against each other togather data**
 
-First naviate to the file.
-    Graph_Sim\test_players.py
-
-To run test on a set of players you first have to select one, here is a set list for each experiment. Above this is the list of all instauated players
-
-![Set of plays that exist for test_players.py](readme_image\sets_of_players.png)
-
-To customise what code is run change these set of constant
-
-![Consts for test_players.py](readme_image\const_test_players.png)
-
-Once it is set up the way you like it then run in the Graph_Sim folder
-    python test_player.py
-
-We do indivdual run these due to some of them taking a long time and therefore we do not have an automated script to run all 5 experiments.
-
-NOTE TO RUN THE SET VISUALSATION YOU MUST RUN ALL TEST THEREFORE I WOULD RECOMMEND ONLY RUNNNING ON A LOW ITERATION COUNT
-
-**Running the code to  against each other togather data**
-
-First naviate to the file.
-
-    Graph_Sim\results.py
-
-To visualise the test results you can edit these constant to change how the visualisation will look
-![Set visualsiation constants setting in results.py](readme_image\results_consts.png)
-
-Now naviate to the file.
-
-    Graph_Sim\get_results.py
-
-To edit where the visualisation are saved you may edit these constants
-![Set file constants setting for visualsiation get_results.py](readme_image\file_info.png)
-
-To edit what is going to be the visualisation edits these constant
-![Set constants of visualsation settings and what data is gathered in get_results.pyy](readme_image\varaiabke.png)
-
-These are the set experiment of all the visualisation used in the disseration, edit at your own risk, also not this creates a lot of visualiastion, the file infomation at the top is used to decern what it means, also True means log.
-![The set of experiment to be used in final disseration](readme_image\Exeriments.png)
-
-Finally run
-
-    Graph_Sim\get_results.py
-
-
-**Experimental Section**
-First naviate to the file.
-
-    Graph_Sim\test_players.py
-
-This this section is code to run against a player. This was designed to help test strategies where working as intented and not designed for random uses
-To run them you provide a single player, either a list of edges in a list of list and vertex count or numbers to randomly generate a graph then finally bool for first or second
-
-**Test Player and gather data:**
-
-To run the test in code first go Graph_Sim/test_player.py. Change any of the constant to meet your requirements in players, filename, folder, size of games and number of iterations. Once done then run the following command in Graph_Sim folder
-
-    python test_player.py
 
