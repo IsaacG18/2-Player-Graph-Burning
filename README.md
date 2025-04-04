@@ -59,3 +59,5 @@ Then navigate to the project directory in the terminal and run the command to cr
 Then finally run this command to install the packages that you will uses
 
      pip install -r requirements.txt
+
+To run the code check out the manual.md
