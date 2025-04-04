@@ -129,8 +129,8 @@ def play_against_robot_matrix(player, edges, size, first):
 
 
 def main():
-    for i in SUGGESTED_PLAYER_NAMES:
-        test_all_players(i[1], i[0], i[0], SIZE, 3)
+    # for i in SUGGESTED_PLAYER_NAMES:
+    #     test_all_players(i[1], i[0], i[0], SIZE, ITER)
     test_all_players(PLAYERS, FILENAME, FOLDER, SIZE, ITER)
 if __name__ == "__main__":
     main() 
