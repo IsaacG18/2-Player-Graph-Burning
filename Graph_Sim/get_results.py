@@ -391,35 +391,43 @@ def run_tests(players, folder, gv, sv, extra,heat, fv, logs):
 
     if heat:
         print("We have started the Heatmap process this can take a monment")
-        for v in fv:
-            print(f"We are working in {v} vertices")
-            win_rates=[]
-            confusion_matrix =get_verse_winrate(folder,v,"", g_player, win_rates)
-            res.plot_confusion_matrix_heatmap(confusion_matrix, g_player, FORMATE, TITLE,f"{folder}{IMAGE}/{PR}{v}{extra}")
+        try:
+            for v in fv:
+                print(f"We are working in {v} vertices")
+                win_rates=[]
+                confusion_matrix =get_verse_winrate(folder,v,"", g_player, win_rates)
+                res.plot_confusion_matrix_heatmap(confusion_matrix, g_player, FORMATE, TITLE,f"{folder}{IMAGE}/{PR}{v}{extra}")
+        except Exception as e:
+            print(f"ERROR AT PLOTTING AND DATA: {folder}, {players} {fv}, {extra}. ERROR IS: {e}")
 
     print(f"We are plotting and gathering stats")
     for a, log in enumerate(logs):
         print(f"Log: {log}, Plot type: {PLOT_TYPE}, Verse: {VERSE}")
         win_rates=[]
         stat=[]
-        for v in fv:
-            for fe in FE:
-                get_set_Plots(folder,v,fe, g_player, VERSE, extra+str(log), FILTER, log, PLOT_TYPE)
-                if a== 0:
-                    get_all_WR(folder,v,fe, s_player, VERSE, win_rates, FILTER)
-                    get_all_stat(folder,v,fe, s_player, VERSE, stat, FILTER)
-        if a== 0:
-            with open(folder+IMAGE+"/"+extra+STAT_FILE, mode="w", newline="") as file:
-                writer = csv.writer(file)
-                writer.writerow(["Names"]+s_player)
-                for row in stat:
-                    writer.writerow([row[0]] + [item for item in row[1:]]) 
-            with open(folder+IMAGE+"/"+extra+WR_FILE, mode="w", newline="") as file:
-                writer = csv.writer(file)
-                writer.writerow(["Names"]+s_player)
-                for row in win_rates:
-                    writer.writerow([row[0]] + [item for item in row[1:]])
-            get_all_bars(folder, g_player, stat, fv, extra)
+        try:
+            for v in fv:
+                for fe in FE:
+                    get_set_Plots(folder,v,fe, g_player, VERSE, extra+str(log), FILTER, log, PLOT_TYPE)
+                    if a== 0:
+                        get_all_WR(folder,v,fe, s_player, VERSE, win_rates, FILTER)
+                        get_all_stat(folder,v,fe, s_player, VERSE, stat, FILTER)
+                    
+            if a== 0:
+                with open(folder+IMAGE+"/"+extra+STAT_FILE, mode="w", newline="") as file:
+                    writer = csv.writer(file)
+                    writer.writerow(["Names"]+s_player)
+                    for row in stat:
+                        writer.writerow([row[0]] + [item for item in row[1:]]) 
+                with open(folder+IMAGE+"/"+extra+WR_FILE, mode="w", newline="") as file:
+                    writer = csv.writer(file)
+                    writer.writerow(["Names"]+s_player)
+                    for row in win_rates:
+                        writer.writerow([row[0]] + [item for item in row[1:]])
+                get_all_bars(folder, g_player, stat, fv, extra)
+        except Exception as e:
+            print(f"ERROR AT PLOTTING AND DATA: {folder}, {players} {fv}, {extra}. ERROR IS: {e}")
+        
             
 
 def main():

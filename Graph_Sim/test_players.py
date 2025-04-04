@@ -65,7 +65,7 @@ GP_F_PLAYERS = [gns_dfs , gp_dfs_sim, f_dfs_sim, gp_dfs_iso, f_dfs_iso, gp_dfs_n
 MC_PLAYERS = [gns_dfs, mc50, mc100, mc150,mc200,mc250]
 
 #SET FILENAME AND FOLDER AS INDEX 0 of TUPLE and PLAYERS AS INDEX 1
-SUGGESTED_PLAYER_NAMES = [("Last_HNK", HKN_PLAYERS), ("Last_FDM", FDM_PLAYERS), ("Last_GP_F", GP_F_PLAYERS), ("Last_MC", MC_PLAYERS)]
+SUGGESTED_PLAYER_NAMES = [("Last_HKN", HKN_PLAYERS), ("Last_FDM", FDM_PLAYERS), ("Last_GP_F", GP_F_PLAYERS), ("Last_MC", MC_PLAYERS)]
 
 
 
@@ -129,8 +129,8 @@ def play_against_robot_matrix(player, edges, size, first):
 
 
 def main():
-    # for i in SUGGESTED_PLAYER_NAMES:
-    #     test_all_players(i[1], i[0], i[0], SIZE, ITER)
+    for i in SUGGESTED_PLAYER_NAMES:
+        test_all_players(i[1], i[0], i[0], SIZE, 3)
     test_all_players(PLAYERS, FILENAME, FOLDER, SIZE, ITER)
 if __name__ == "__main__":
     main() 
